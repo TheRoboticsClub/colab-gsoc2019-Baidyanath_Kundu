@@ -70,6 +70,7 @@ class VisualStates(QMainWindow):
         self.automataPath = None
 
         self.libraries = []
+        self.params = []
         self.config = None
 
     def createMenu(self):
@@ -446,6 +447,9 @@ class VisualStates(QMainWindow):
 
     def librariesChanged(self, libraries):
         self.libraries = libraries
+
+    def paramsChanged(self, params):
+        self.params = params
 
     def globalNamespaceChanged(self):
         if self.globalNamespaceDialog:
