@@ -26,6 +26,7 @@ from ..core.namespace import Namespace
 from .transition.timerdialog import TimerDialog
 from .dialogs.namespacedialog import NamespaceDialog
 from .dialogs.librariesdialog import LibrariesDialog
+from .dialogs.paramsdialog import ParamsDialog
 from .dialogs.rosconfigdialog import RosConfigDialog
 from ..configs.rosconfig import RosConfig
 from ..generators.cpprosgenerator import CppRosGenerator
@@ -115,6 +116,11 @@ class VisualStates(QMainWindow):
         transitionAction.triggered.connect(self.transitionAction)
 
         # data menu
+        paramsAction = QAction('&Parameters', self)
+        paramsAction.setShortcut('Ctrl+P')
+        paramsAction.setStatusTip('Edit parameters')
+        paramsAction.triggered.connect(self.paramsAction)
+
         timerAction = QAction('&Timer', self)
         timerAction.setShortcut('Ctrl+M')
         timerAction.setStatusTip('Set timing of states')
@@ -172,6 +178,7 @@ class VisualStates(QMainWindow):
         figuresMenu.addAction(transitionAction)
 
         dataMenu = menubar.addMenu('&Data')
+        dataMenu.addAction(paramsAction)
         dataMenu.addAction(timerAction)
         dataMenu.addAction(globalNamespaceAction)
         dataMenu.addAction(stateNamespaceAction)
@@ -270,6 +277,11 @@ class VisualStates(QMainWindow):
             self.treeModel.loadFromRoot(importedState, self.activeState)
             self.automataScene.displayState(self.activeState)
             self.automataScene.setLastIndexes(self.rootState)
+
+    def paramsAction(self):
+        paramsDialog = ParamsDialog('Parameters', self.params)
+        paramsDialog.paramsChanged.connect(self.paramsChanged)
+        paramsDialog.exec_()
 
     def timerAction(self):
         if self.activeState is not None:
