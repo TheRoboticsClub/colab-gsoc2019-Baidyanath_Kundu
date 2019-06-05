@@ -30,7 +30,7 @@ class CppRosGenerator(BaseGenerator):
     def __init__(self, libraries, config, states, globalNamespace):
         BaseGenerator.__init__(self, libraries, config, states, globalNamespace)
 
-    def generate(self, projectPath, projectName):
+    def generate(self, params, projectPath, projectName):
         # create source dir if not exists
         if not os.path.exists(projectPath + os.sep + 'src'):
             os.makedirs(projectPath + os.sep + 'src')
@@ -42,10 +42,7 @@ class CppRosGenerator(BaseGenerator):
         self.generateStateClasses(stringList)
         self.generateTransitionClasses(stringList)
         stringList.append('#endif')
-        sourceCode = ''.join(stringList)
-        fp = open(projectPath + os.sep + 'src' + os.sep + projectName + '.h', 'w')
-        fp.write(sourceCode)
-        fp.close()
+        headerSourceCode = ''.join(stringList)
 
         stringList = []
         self.generateHeadersForCpp(stringList, projectName)
@@ -56,28 +53,46 @@ class CppRosGenerator(BaseGenerator):
         self.generateMain(stringList, projectName)
         sourceCode = ''.join(stringList)
 
-        fp = open(projectPath + os.sep + 'src' + os.sep + projectName + '.cpp', 'w')
-        fp.write(sourceCode)
-        fp.close()
-
         stringList = []
         self.generateRunTimeGui(stringList)
-        sourceCode = ''.join(stringList)
-        fp = open(projectPath + os.sep + projectName + '_runtime.py', 'w')
-        fp.write(sourceCode)
-        fp.close()
-        # make runtime gui python file executable
-        os.chmod(projectPath + os.sep + projectName + '_runtime.py', stat.S_IEXEC | stat.S_IXOTH | stat.S_IWRITE | stat.S_IREAD)
+        guiSourceCode = ''.join(stringList)
 
         stringList = []
         self.generateCmake(stringList, projectName, self.config)
         cmakeString = ''.join(stringList)
+
+        xmlDoc = self.generatePackageXml(self.config, projectName)
+        xmlStr = xmlDoc.toprettyxml(indent='  ')
+
+        # replacing parameters with their values
+        for param in params:
+            findText = '${' + param.name + '}'
+            headerSourceCode = headerSourceCode.replace(findText, param.value)
+            sourceCode = sourceCode.replace(findText, param.value)
+            guiSourceCode = guiSourceCode.replace(findText, param.value)
+            cmakeString = cmakeString.replace(findText, param.value)
+            xmlStr = xmlStr.replace(findText, param.value)
+
+        # writing to files
+        fp = open(projectPath + os.sep + 'src' + os.sep + projectName + '.h', 'w')
+        fp.write(headerSourceCode)
+        fp.close()
+
+
+        fp = open(projectPath + os.sep + 'src' + os.sep + projectName + '.cpp', 'w')
+        fp.write(sourceCode)
+        fp.close()
+
+        fp = open(projectPath + os.sep + projectName + '_runtime.py', 'w')
+        fp.write(guiSourceCode)
+        fp.close()
+        # make runtime gui python file executable
+        os.chmod(projectPath + os.sep + projectName + '_runtime.py', stat.S_IEXEC | stat.S_IXOTH | stat.S_IWRITE | stat.S_IREAD)
+
         fp = open(projectPath + os.sep + 'CMakeLists.txt', 'w')
         fp.write(cmakeString)
         fp.close()
 
-        xmlDoc = self.generatePackageXml(self.config, projectName)
-        xmlStr = xmlDoc.toprettyxml(indent='  ')
         with open(projectPath + os.sep + 'package.xml', 'w') as f:
             f.write(xmlStr)
 

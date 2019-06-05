@@ -324,7 +324,7 @@ class VisualStates(QMainWindow):
             if self.config is None:
                 self.config = RosConfig()
             generator = CppRosGenerator(self.libraries, self.config, stateList, self.globalNamespace)
-            generator.generate(self.fileManager.getPath(), self.fileManager.getFileName())
+            generator.generate(self.params, self.fileManager.getPath(), self.fileManager.getFileName())
             self.showInfo('C++ Code Generation', 'C++ code generation is successful.')
         else:
             self.showWarning('C++ Generation', 'Please save the project before code generation.')
