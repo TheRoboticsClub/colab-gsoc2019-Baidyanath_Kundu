@@ -77,6 +77,14 @@ class FileManager():
         self.setFullPath(fullPath)
         doc = minidom.parse(fullPath)
 
+        params = []
+        paramsElement = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('parameters')
+        if len(paramsElement) > 0:
+            for paramElement in paramsElement[0].getElementsByTagName('param'):
+                param = Parameter()
+                param.parseElement(paramElement)
+                params.append(param)
+
         globalNamespaceNode = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('global_namespace')[0]
         globalNamespace = Namespace('', '')
         globalNamespace.parse(globalNamespaceNode)
@@ -100,7 +108,7 @@ class FileManager():
             for libElement in libraryElements:
                 libraries.append(libElement.childNodes[0].nodeValue)
 
-        return rootState, config, libraries, globalNamespace
+        return params, rootState, config, libraries, globalNamespace
 
     def hasFile(self):
         return len(self.fullPath) > 0

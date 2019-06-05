@@ -52,6 +52,18 @@ class Parameter:
 
         return paramElement
 
+    def parseElement(self, element):
+        for (name, value) in element.attributes.items():
+            if name == 'name':
+                self.name = str(value)
+            elif name == 'type':
+                self.type = str(value)
+
+        self.value = str(element.getElementsByTagName('value')[0].childNodes[0].nodeValue)
+        self.desc = str(element.getElementsByTagName('description')[0].childNodes[0].nodeValue)
+        print(self.name)
+        print(self.value)
+
 def isTypeEqualValue(type, value):
     if type == 'Boolean' and not (value == 'True' or value == 'False'):
         return False

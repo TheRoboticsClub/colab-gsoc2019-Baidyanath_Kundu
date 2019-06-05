@@ -221,7 +221,7 @@ class VisualStates(QMainWindow):
             self.openFile(fileDialog.selectedFiles()[0])
 
     def openFile(self, fileName):
-        (self.rootState, self.config, self.libraries, self.globalNamespace) = self.fileManager.open(fileName)
+        (self.params, self.rootState, self.config, self.libraries, self.globalNamespace) = self.fileManager.open(fileName)
         self.automataPath = self.fileManager.fullPath
         self.treeModel.removeAll()
         self.treeModel.loadFromRoot(self.rootState)
