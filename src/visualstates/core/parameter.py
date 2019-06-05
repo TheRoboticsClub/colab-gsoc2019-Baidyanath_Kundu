@@ -75,7 +75,9 @@ def isTypeEqualValue(type, value):
         return True
 
 def isParamName(name):
-    if name.replace('_', '').isalnum() and name[0].isalpha():
+    if name == '':
+        return False
+    elif name.replace('_', '').isalnum() and name[0].isalpha():
         return True
     else:
         return False
