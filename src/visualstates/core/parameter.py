@@ -17,6 +17,7 @@
    Authors : Baidyanath Kundu (kundubaidya99@gmail.com)
 
   '''
+from xml.dom.minidom import Node
 
 class Parameter:
     def __init__(self):
@@ -36,6 +37,20 @@ class Parameter:
 
     def setDesc(self, desc):
         self.desc = desc
+
+    def createDocFromParam(self, doc):
+        paramElement = doc.createElement('param')
+        paramElement.setAttribute('type', self.type)
+        paramElement.setAttribute('name', self.name)
+
+        valueElement = doc.createElement('value')
+        valueElement.appendChild(doc.createTextNode(self.value))
+        paramElement.appendChild(valueElement)
+        descElement = doc.createElement('description')
+        descElement.appendChild(doc.createTextNode(self.desc))
+        paramElement.appendChild(descElement)
+
+        return paramElement
 
 def isTypeEqualValue(type, value):
     if type == 'Boolean' and not (value == 'True' or value == 'False'):

@@ -207,6 +207,7 @@ class VisualStates(QMainWindow):
         self.automataScene.resetIndexes()
 
         self.libraries = []
+        self.params = []
         self.config = None
 
     def openAction(self):
@@ -233,7 +234,7 @@ class VisualStates(QMainWindow):
         if len(self.fileManager.getFileName()) == 0:
             self.saveAsAction()
         else:
-            self.fileManager.save(self.rootState, self.config, self.libraries, self.globalNamespace)
+            self.fileManager.save(self.params, self.rootState, self.config, self.libraries, self.globalNamespace)
 
     def saveAsAction(self):
         fileDialog = QFileDialog(self)
@@ -243,7 +244,7 @@ class VisualStates(QMainWindow):
         fileDialog.setAcceptMode(QFileDialog.AcceptSave)
         if fileDialog.exec_():
             self.fileManager.setFullPath(fileDialog.selectedFiles()[0])
-            self.fileManager.save(self.rootState, self.config, self.libraries, self.globalNamespace)
+            self.fileManager.save(self.params, self.rootState, self.config, self.libraries, self.globalNamespace)
 
     def quitAction(self):
         # print('Quit')
