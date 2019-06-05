@@ -340,7 +340,7 @@ class VisualStates(QMainWindow):
             if self.config is None:
                 self.config = RosConfig()
             generator = PythonRosGenerator(self.libraries, self.config, stateList, self.globalNamespace)
-            generator.generate(self.fileManager.getPath(), self.fileManager.getFileName())
+            generator.generate(self.params, self.fileManager.getPath(), self.fileManager.getFileName())
             self.showInfo('Python Code Generation', 'Python code generation is successful.')
         else:
             self.showWarning('Python Generation', 'Please save the project before code generation.')
