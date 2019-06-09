@@ -102,6 +102,8 @@ class ParamPropDialog(QDialog):
             QMessageBox.warning(self, 'Error', 'Name does not meet requirements of a parameter')
         else:
             for param in self.params:
+                if self.id != -1 and param == self.params[self.id]:
+                    continue
                 if param.name == self.nameEdit.text():
                     QMessageBox.warning(self, 'Error', 'Name already in use')
                     return
