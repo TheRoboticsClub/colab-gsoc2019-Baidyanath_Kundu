@@ -51,8 +51,6 @@ class PythonRosGenerator(BaseGenerator):
         for param in params:
             findText = '${'+param.name+'}'
             sourceCode = sourceCode.replace(findText, param.value)
-            cmakeString = cmakeString.replace(findText, param.value)
-            xmlStr = xmlStr.replace(findText, param.value)
 
         #writing to files
         fp = open(projectPath + os.sep + projectName + '.py', 'w')

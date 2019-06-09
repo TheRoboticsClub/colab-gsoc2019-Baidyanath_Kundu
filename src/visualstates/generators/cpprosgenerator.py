@@ -67,11 +67,8 @@ class CppRosGenerator(BaseGenerator):
         # replacing parameters with their values
         for param in params:
             findText = '${' + param.name + '}'
-            headerSourceCode = headerSourceCode.replace(findText, param.value)
             sourceCode = sourceCode.replace(findText, param.value)
             guiSourceCode = guiSourceCode.replace(findText, param.value)
-            cmakeString = cmakeString.replace(findText, param.value)
-            xmlStr = xmlStr.replace(findText, param.value)
 
         # writing to files
         fp = open(projectPath + os.sep + 'src' + os.sep + projectName + '.h', 'w')
