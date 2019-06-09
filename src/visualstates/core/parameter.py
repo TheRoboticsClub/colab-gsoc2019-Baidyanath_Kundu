@@ -57,11 +57,14 @@ class Parameter:
                 self.name = str(value)
             elif name == 'type':
                 self.type = str(value)
-
-        self.value = str(element.getElementsByTagName('value')[0].childNodes[0].nodeValue)
-        self.desc = str(element.getElementsByTagName('description')[0].childNodes[0].nodeValue)
-        print(self.name)
-        print(self.value)
+        try:
+            self.value = str(element.getElementsByTagName('value')[0].childNodes[0].nodeValue)
+        except IndexError:
+            self.desc = ''
+        try:
+            self.desc = str(element.getElementsByTagName('description')[0].childNodes[0].nodeValue)
+        except IndexError:
+            self.desc = ''
 
 def isTypeEqualValue(type, value):
     if type == 'Boolean' and not (value == 'True' or value == 'False'):
