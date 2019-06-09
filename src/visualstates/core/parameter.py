@@ -17,14 +17,13 @@
    Authors : Baidyanath Kundu (kundubaidya99@gmail.com)
 
   '''
-from xml.dom.minidom import Node
 
 class Parameter:
-    def __init__(self):
-        self.name = ''
-        self.type = ''
-        self.value = ''
-        self.desc = ''
+    def __init__(self, name='', type='', value='', desc=''):
+        self.name = name
+        self.type = type
+        self.value = value
+        self.desc = desc
 
     def setName(self, name):
         self.name = name
