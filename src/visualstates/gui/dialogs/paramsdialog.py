@@ -18,21 +18,21 @@
 
   '''
 import sys
-from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, \
+from PyQt5.QtWidgets import QDialog, QLabel,  \
     QPushButton, QApplication, QHBoxLayout, QVBoxLayout, \
     QScrollArea, QGroupBox, QBoxLayout
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 from visualstates.gui.dialogs.paramprop import ParamPropDialog
-from visualstates.core.parameter import Parameter
-from PyQt5.QtCore import *
+from visualstates.gui.tools.elidedlabel import ElidedLabel
 
 
 class ParamsDialog(QDialog):
     paramsChanged = pyqtSignal(list)
 
-    def __init__(self, name, params):
+    def __init__(self, name, params, modify=True):
         super(QDialog, self).__init__()
         self.setWindowTitle(name)
+        self.modify = modify
         self.params = params
         self.paramUIs = []
         self.removeIds = []
@@ -82,10 +82,11 @@ class ParamsDialog(QDialog):
 
         btnLayout = QHBoxLayout()
         btnLayout.setAlignment(Qt.AlignRight)
-        newBtn = QPushButton("New")
-        newBtn.setFixedWidth(80)
-        newBtn.clicked.connect(self.newClicked)
-        btnLayout.addWidget(newBtn)
+        if self.modify:
+            newBtn = QPushButton("New")
+            newBtn.setFixedWidth(80)
+            newBtn.clicked.connect(self.newClicked)
+            btnLayout.addWidget(newBtn)
         doneBtn = QPushButton("Done")
         doneBtn.setFixedWidth(80)
         doneBtn.clicked.connect(self.doneClicked)
@@ -103,37 +104,43 @@ class ParamsDialog(QDialog):
     def addParam(self, id):
         param = self.params[id]
         rowLayout = QHBoxLayout()
-        nameLbl = QLabel(param.name)
+        nameLbl = ElidedLabel(param.name)
         nameLbl.setToolTip(param.name)
         nameLbl.setFixedWidth(100)
         rowLayout.addWidget(nameLbl)
-        typeLbl = QLabel(param.type)
+        typeLbl = ElidedLabel(param.type)
         typeLbl.setFixedWidth(60)
         rowLayout.addWidget(typeLbl)
-        valueLbl = QLabel(param.value)
+        valueLbl = ElidedLabel(param.value)
         valueLbl.setToolTip(param.value)
         valueLbl.setFixedWidth(100)
         rowLayout.addWidget(valueLbl)
-        descLbl = QLabel(param.desc)
+        descLbl = ElidedLabel(param.desc)
+        descLbl.setAlignment(Qt.AlignTop)
         descLbl.setFixedHeight(17)
         descLbl.setToolTip(param.desc)
-        descLbl.setFixedWidth(280)
+        if self.modify:
+            descLbl.setFixedWidth(280)
+        else:
+            descLbl.setFixedWidth(440)
         rowLayout.addWidget(descLbl)
 
-        editBtn = QPushButton('Edit')
-        editBtn.setFixedWidth(80)
-        editBtn.setObjectName(str(id))
-        editBtn.clicked.connect(self.editHandler)
-        rowLayout.addWidget(editBtn)
-        removeBtn = QPushButton('Remove')
-        removeBtn.setFixedWidth(80)
-        removeBtn.setObjectName(str(id))
-        removeBtn.clicked.connect(self.removeHandler)
-        rowLayout.addWidget(removeBtn)
+        if self.modify:
+            editBtn = QPushButton('Edit')
+            editBtn.setFixedWidth(80)
+            editBtn.setObjectName(str(id))
+            editBtn.clicked.connect(self.editHandler)
+            rowLayout.addWidget(editBtn)
+            removeBtn = QPushButton('Remove')
+            removeBtn.setFixedWidth(80)
+            removeBtn.setObjectName(str(id))
+            removeBtn.clicked.connect(self.removeHandler)
+            rowLayout.addWidget(removeBtn)
 
         self.scrollVlayout.addLayout(rowLayout)
-        UI = [nameLbl, typeLbl, valueLbl, descLbl, editBtn, removeBtn]
-        self.paramUIs.append(UI)
+        if self.modify:
+            UI = [nameLbl, typeLbl, valueLbl, descLbl, editBtn, removeBtn]
+            self.paramUIs.append(UI)
 
     def paramAddedHandler(self, params):
         self.params = params
@@ -157,18 +164,23 @@ class ParamsDialog(QDialog):
         param = self.params[id]
         UI = self.paramUIs[id]
         UI[0].setText(param.name)
+        UI[0].setToolTip(param.name)
         UI[1].setText(param.type)
+        UI[1].setToolTip(param.type)
         UI[2].setText(param.value)
+        UI[2].setToolTip(param.value)
         UI[3].setText(param.desc)
+        UI[3].setToolTip(param.desc)
 
 
     def doneClicked(self):
-        count = 0
-        for id in self.removeIds:
-            id = id - count
-            self.params.pop(id)
-            count += 1
-        self.paramsChanged.emit(self.params)
+        if self.modify:
+            count = 0
+            for id in self.removeIds:
+                id = id - count
+                self.params.pop(id)
+                count += 1
+            self.paramsChanged.emit(self.params)
         self.close()
 
 if __name__ == '__main__':
