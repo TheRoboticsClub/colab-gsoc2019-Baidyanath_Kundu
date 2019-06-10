@@ -3,11 +3,11 @@
 
 |Contents                                 |
 |-----------------------------------------|
-|1. [Visual States Tool](#visualstates)   |
+|1. [VisualStates Tool](#visualstates)   |
 |2. [People Involved](#people-involved)            |
 |3. [Links](#links)                       |
 |4. [Development Status](#status)         |
-|5. [Weekly Documentation](#documentation)|
+|5. [Documentation](#documentation)|
 
 <a name="visualstates"/>
 
@@ -43,7 +43,7 @@ that has to be manually created.
 |S.No.| Sub-Project                                 | Status | Timeline                    |
 |----:|---------------------------------------------|:------:|:---------------------------:|
 |     |**Phase 1: Parameterization of VisualStates**|        |May 27, 2019 - June 16, 2019 |
-|1.   |Add feature to Visual States Tool            |        |                             |
+|1.   |Add feature to Visual States Tool            | Done   |                             |
 |2.   |Create example with parameters               |        |                             |
 |     |**Phase 2: Creating a library of automatas** |        |June 17, 2019 - July 21, 2019|
 |1.   |Create the repository for online library     |        |                             |
@@ -52,5 +52,12 @@ that has to be manually created.
 
 <a name="documentation"/>
 
-## Weekly Documentation
+## Documentation
+#### Week 1-2: 27 May, 2019 - 9 June, 2019
+##### Tasks
+- Test all the examples present in VisualStates-examples
+- Create a kobuki obstacle avoidance behaviour to internalize the tool
+- Add parameterization to the VisualStates Tool
 
+##### Progress
+- Added parameterization to the Visual States - [Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/1)
