@@ -53,6 +53,30 @@ that has to be manually created.
 <a name="documentation"/>
 
 ## Documentation
+#### Week 3: 10 June 2019 - 16 June 2019
+##### Discussion
+- The issue [Child Automata doesn't start from initial state if
+  parent state ran once](https://github.com/JdeRobot/VisualStates/issues/114).
+    - This could be a design decision or a flaw needs to be looked into.
+- The design of VisualStates could be improved by implementing a tabbed
+  structure - Issue opened [here](https://github.com/JdeRobot/VisualStates/issues/120).
+    - Further discussion will be held on an issue that will be opened
+      on the VisualStates repository.
+- The issue of [User Input Validation](https://github.com/JdeRobot/VisualStates/issues/96) .
+    - The issue needs to be split into specific issues(by me) for
+      specific inputs.
+- Transition Code and Condition execution order.
+- Instead of keeping a Python and a C++ radio button to change syntax 
+  highlighting ask user for his language preference at the beginning of
+  the new behaviour.
+- An issue needs to be created (by me) for the parameter design documentation.
+  It will help in taking inputs from everyone to better the design - Issue opened 
+  [here](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/issues/2)
+##### Task
+- Solve the User Input Validation Issues
+- Change design of parameterization as inputs are provided on the 
+  [issue](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/issues/2)
+
 #### Week 1-2: 27 May, 2019 - 9 June, 2019
 ##### Tasks
 - Test all the examples present in VisualStates-examples
