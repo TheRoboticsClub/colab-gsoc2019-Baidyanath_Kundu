@@ -76,6 +76,7 @@ that has to be manually created.
 - Solve the User Input Validation Issues
 - Change design of parameterization as inputs are provided on the 
   [issue](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/issues/2)
+- Add parameters to VisualStates examples
 
 #### Week 1-2: 27 May, 2019 - 9 June, 2019
 ##### Tasks
