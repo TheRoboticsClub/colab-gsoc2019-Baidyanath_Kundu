@@ -31,7 +31,7 @@ from visualstates.gui.tools.elidedlabel import ElidedLabel
 class NamespaceDialog(QDialog):
     namespaceChanged = pyqtSignal()
 
-    def __init__(self, name, namespace):
+    def __init__(self, name, namespace, globalNamespace=False):
         super(QDialog, self).__init__()
         self.setWindowTitle(name)
         self.resize(820,600)

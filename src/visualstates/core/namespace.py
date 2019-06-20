@@ -17,6 +17,8 @@
    Authors : Pushkal Katara (katarapushkal@gmail.com)
 
   '''
+from visualstates.core.parameter import Parameter
+
 class Namespace:
     def __init__(self, functions, variables, params):
         self.functions = functions
@@ -47,9 +49,20 @@ class Namespace:
                 return elements[0].childNodes[0].nodeValue
         return ''
 
+    def parseParamElement(self, parentElement):
+        params = []
+        paramsElement = parentElement.getElementsByTagName('parameters')
+        if len(paramsElement) > 0:
+            for paramElement in paramsElement[0].getElementsByTagName('param'):
+                param = Parameter()
+                param.parseElement(paramElement)
+                params.append(param)
+        return params
+
     def parse(self, namespaceElement):
         self.functions = self.parseElement('functions', namespaceElement)
         self.variables = self.parseElement('variables', namespaceElement)
+        self.params = self.parseParamElement(namespaceElement)
 
     def getVariables(self):
         return self.variables

@@ -18,7 +18,6 @@
 
   '''
 from xml.dom import minidom
-from visualstates.core.parameter import Parameter
 from visualstates.core.state import State
 from visualstates.core.namespace import Namespace
 from visualstates.configs.rosconfig import RosConfig
@@ -71,16 +70,8 @@ class FileManager():
         self.setFullPath(fullPath)
         doc = minidom.parse(fullPath)
 
-        params = []
-        paramsElement = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('parameters')
-        if len(paramsElement) > 0:
-            for paramElement in paramsElement[0].getElementsByTagName('param'):
-                param = Parameter()
-                param.parseElement(paramElement)
-                params.append(param)
-
         globalNamespaceNode = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('global_namespace')[0]
-        globalNamespace = Namespace('', '')
+        globalNamespace = Namespace('', '', [])
         globalNamespace.parse(globalNamespaceNode)
 
         rootNode = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('state')[0]
@@ -102,7 +93,7 @@ class FileManager():
             for libElement in libraryElements:
                 libraries.append(libElement.childNodes[0].nodeValue)
 
-        return params, rootState, config, libraries, globalNamespace
+        return rootState, config, libraries, globalNamespace
 
     def hasFile(self):
         return len(self.fullPath) > 0
