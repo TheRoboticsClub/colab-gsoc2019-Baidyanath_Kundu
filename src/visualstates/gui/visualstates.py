@@ -26,7 +26,6 @@ from ..core.namespace import Namespace
 from .transition.timerdialog import TimerDialog
 from .dialogs.namespacedialog import NamespaceDialog
 from .dialogs.librariesdialog import LibrariesDialog
-from .dialogs.paramsdialog import ParamsDialog
 from .dialogs.rosconfigdialog import RosConfigDialog
 from ..configs.rosconfig import RosConfig
 from ..generators.cpprosgenerator import CppRosGenerator
@@ -43,8 +42,8 @@ class VisualStates(QMainWindow):
         self.configDialog = None
 
         # root state
-        self.globalNamespace = Namespace('', '')
-        self.localNamespace = Namespace('', '')
+        self.globalNamespace = Namespace('', '', [])
+        self.localNamespace = Namespace('', '', [])
         self.rootState = State(0, "root", True, self.localNamespace)
         self.activeState = self.rootState
         self.activeNamespace = self.localNamespace
@@ -71,7 +70,6 @@ class VisualStates(QMainWindow):
         self.automataPath = None
 
         self.libraries = []
-        self.params = []
         self.config = None
 
     def createMenu(self):
@@ -114,12 +112,6 @@ class VisualStates(QMainWindow):
         transitionAction = QAction('&Transition', self)
         transitionAction.setStatusTip('Create a transition')
         transitionAction.triggered.connect(self.transitionAction)
-
-        # data menu
-        paramsAction = QAction('&Parameters', self)
-        paramsAction.setShortcut('Ctrl+P')
-        paramsAction.setStatusTip('Edit parameters')
-        paramsAction.triggered.connect(self.paramsAction)
 
         timerAction = QAction('&Timer', self)
         timerAction.setShortcut('Ctrl+M')
@@ -178,7 +170,6 @@ class VisualStates(QMainWindow):
         figuresMenu.addAction(transitionAction)
 
         dataMenu = menubar.addMenu('&Data')
-        dataMenu.addAction(paramsAction)
         dataMenu.addAction(timerAction)
         dataMenu.addAction(globalNamespaceAction)
         dataMenu.addAction(stateNamespaceAction)
@@ -198,8 +189,8 @@ class VisualStates(QMainWindow):
         self.treeModel.removeAll()
 
         # create new root state
-        self.globalNamespace = Namespace('', '')
-        self.localNamespace = Namespace('', '')
+        self.globalNamespace = Namespace('', '', [])
+        self.localNamespace = Namespace('', '', [])
         self.rootState = State(0, 'root', True, self.localNamespace)
 
         self.automataScene.setActiveState(self.rootState)
@@ -207,7 +198,6 @@ class VisualStates(QMainWindow):
         self.automataScene.resetIndexes()
 
         self.libraries = []
-        self.params = []
         self.config = None
 
     def openAction(self):
@@ -278,11 +268,6 @@ class VisualStates(QMainWindow):
             self.treeModel.loadFromRoot(importedState, self.activeState)
             self.automataScene.displayState(self.activeState)
             self.automataScene.setLastIndexes(self.rootState)
-
-    def paramsAction(self):
-        paramsDialog = ParamsDialog('Parameters', self.params)
-        paramsDialog.paramsChanged.connect(self.paramsChanged)
-        paramsDialog.exec_()
 
     def timerAction(self):
         if self.activeState is not None:
@@ -460,9 +445,6 @@ class VisualStates(QMainWindow):
 
     def librariesChanged(self, libraries):
         self.libraries = libraries
-
-    def paramsChanged(self, params):
-        self.params = params
 
     def globalNamespaceChanged(self):
         if self.globalNamespaceDialog:

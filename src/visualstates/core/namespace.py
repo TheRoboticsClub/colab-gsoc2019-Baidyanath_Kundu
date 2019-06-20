@@ -18,9 +18,10 @@
 
   '''
 class Namespace:
-    def __init__(self, functions, variables):
+    def __init__(self, functions, variables, params):
         self.functions = functions
         self.variables = variables
+        self.params = params
 
     def createNode(self, doc, globalNamespace=False):
         if globalNamespace:
@@ -80,3 +81,9 @@ class Namespace:
 
     def setFunctions(self, functions):
         self.functions = functions
+
+    def getParams(self):
+        return self.params
+
+    def setParams(self, params):
+        self.params = params
