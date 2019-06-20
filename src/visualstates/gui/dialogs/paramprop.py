@@ -59,7 +59,7 @@ class ParamPropDialog(QDialog):
         typeLbl.setFixedWidth(100)
         rowLayout.addWidget(typeLbl)
         self.typeCb = QComboBox()
-        self.typeCb.addItems(['String', 'Integer', 'Float', 'Boolean'])
+        self.typeCb.addItems(['String', 'Character', 'Integer', 'Float', 'Boolean'])
         self.typeCb.setCurrentText(self.param.type)
         rowLayout.addWidget(self.typeCb)
         Layout.addLayout(rowLayout)

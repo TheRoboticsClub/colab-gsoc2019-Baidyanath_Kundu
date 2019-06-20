@@ -67,11 +67,13 @@ class Parameter:
             self.desc = ''
 
 def isTypeEqualValue(type, value):
-    if type == 'Boolean' and not (value == 'True' or value == 'False'):
+    if type == 'Boolean' and not (value == 'True' or value == 'False' or value == 'true' or value == 'false'):
         return False
     elif type == 'Integer' and not value.isdigit():
         return False
     elif type == 'Float' and not (value.replace('.', '', 1).isdigit()):
+        return False
+    elif type == 'Character' and not len(value) == 1:
         return False
     else:
         return True

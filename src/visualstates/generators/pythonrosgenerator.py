@@ -47,16 +47,16 @@ class PythonRosGenerator(BaseGenerator):
         xmlDoc = self.generatePackageXml(self.config, projectName)
         xmlStr = xmlDoc.toprettyxml(indent='  ')
 
-        #replacing parameters with their values
+        # replacing parameters with their values
         for param in params:
-            findText = '${'+param.name+'}'
+            findText = '${' + param.name + '}'
             sourceCode = sourceCode.replace(findText, param.value)
 
-        #writing to files
+        # writing to files
         fp = open(projectPath + os.sep + projectName + '.py', 'w')
         fp.write(sourceCode)
         fp.close()
-        os.system('chmod +x "' +projectPath+ '"' + os.sep + projectName + '.py')
+        os.system('chmod +x "' + projectPath + '"' + os.sep + projectName + '.py')
 
         fp = open(projectPath + os.sep + 'CMakeLists.txt', 'w')
         fp.write(cmakeString)
@@ -74,7 +74,7 @@ import sys, threading, time, rospy, signal
 '''
         importStr.append(mystr)
 
-        typeSet = {''} # create set
+        typeSet = {''}  # create set
         for topic in self.config.getTopics():
             typeStr = topic['type']
             if typeStr not in typeSet:
@@ -129,7 +129,8 @@ from PyQt5.QtWidgets import QApplication
         stateStr.append(str(state.id))
         stateStr.append('(State):\n')
 
-        stateStr.append('\tdef __init__(self, id, initial, globalNamespace, namespace, cycleDuration, parent=None, gui=None):\n')
+        stateStr.append(
+            '\tdef __init__(self, id, initial, globalNamespace, namespace, cycleDuration, parent=None, gui=None):\n')
         stateStr.append('\t\tState.__init__(self, id, initial, cycleDuration, parent, gui)\n')
         stateStr.append('\t\tself.globalNamespace = globalNamespace\n')
         stateStr.append('\t\tself.namespace = namespace\n\n')
@@ -146,12 +147,25 @@ from PyQt5.QtWidgets import QApplication
         stateStr.append('\tdef __init__(self, globalNamespace):\n')
         stateStr.append('\t\tself.globalNamespace = globalNamespace\n')
 
-        if(len(state.namespace.variables) > 0):
+        if (len(state.namespace.variables) > 0):
             for varLine in state.namespace.variables.split('\n'):
                 stateStr.append('\t\t' + varLine + '\n')
         stateStr.append('\n')
 
-        if(len(state.namespace.functions) > 0):
+        if (len(state.namespace.params) > 0):
+            for param in state.namespace.params:
+                varType = param.type
+                if varType == 'String':
+                    varValue = "\"" + param.value + "\""
+                elif varType == 'Character':
+                    varValue = "\'" + param.value + "\'"
+                else:
+                    varValue = param.value
+
+                stateStr.append('\t\t' + param.name + ' = ' + varValue + '\n')
+        stateStr.append('\n')
+
+        if (len(state.namespace.functions) > 0):
             for funcLine in state.namespace.functions.split('\n'):
                 stateStr.append('\t' + funcLine + '\n')
         stateStr.append('\n')
@@ -159,18 +173,20 @@ from PyQt5.QtWidgets import QApplication
     def generateGlobalNamespace(self, globalNamespaceStr, projectName):
         globalNamespaceStr.append('class GlobalNamespace():\n')
         globalNamespaceStr.append('\tdef __init__(self):\n')
-        globalNamespaceStr.append('\t\trospy.init_node("' + projectName + '", anonymous=True, disable_signals=True)\n\n')
+        globalNamespaceStr.append(
+            '\t\trospy.init_node("' + projectName + '", anonymous=True, disable_signals=True)\n\n')
         for topic in self.config.getTopics():
             if topic['opType'] == 'Publish':
                 typesStr = topic['type']
                 types = typesStr.split('/')
                 globalNamespaceStr.append('\t\tself.' + topic['methodname'] + 'Pub = rospy.Publisher("' +
-                              topic['name'] + '", ' + types[1] + ', queue_size=10)\n')
+                                          topic['name'] + '", ' + types[1] + ', queue_size=10)\n')
             elif topic['opType'] == 'Subscribe':
                 typesStr = topic['type']
                 types = typesStr.split('/')
                 globalNamespaceStr.append('\t\tself.' + topic['variablename'] + 'Sub = rospy.Subscriber("' +
-                                  topic['name'] + '", ' + types[1] + ', self.' + topic['variablename'] + 'Callback)\n')
+                                          topic['name'] + '", ' + types[1] + ', self.' + topic[
+                                              'variablename'] + 'Callback)\n')
                 globalNamespaceStr.append('\t\tself.' + topic['variablename'] + ' = ' + types[1] + '()\n')
 
         # add state variables as part of ros node
@@ -180,7 +196,8 @@ from PyQt5.QtWidgets import QApplication
                 globalNamespaceStr.append('\t\t' + varLine + '\n')
             globalNamespaceStr.append('\n')
 
-        globalNamespaceStr.append('\t\ttime.sleep(1) # wait for initialization of the node, subscriber, and publisher\n\n')
+        globalNamespaceStr.append(
+            '\t\ttime.sleep(1) # wait for initialization of the node, subscriber, and publisher\n\n')
 
         globalNamespaceStr.append('\tdef stop(self):\n')
         globalNamespaceStr.append('\t\trospy.signal_shutdown("exit ROS node")\n\n')
@@ -189,9 +206,11 @@ from PyQt5.QtWidgets import QApplication
         for topic in self.config.getTopics():
             if topic['opType'] == 'Publish':
                 globalNamespaceStr.append('\tdef ' + topic['methodname'] + '(self, _' + topic['methodname'] + '):\n')
-                globalNamespaceStr.append('\t\tself.' + topic['methodname'] + 'Pub.publish(_' + topic['methodname'] + ')\n\n')
+                globalNamespaceStr.append(
+                    '\t\tself.' + topic['methodname'] + 'Pub.publish(_' + topic['methodname'] + ')\n\n')
             elif topic['opType'] == 'Subscribe':
-                globalNamespaceStr.append('\tdef ' + topic['variablename'] + 'Callback(self, _' + topic['variablename'] + '):\n')
+                globalNamespaceStr.append(
+                    '\tdef ' + topic['variablename'] + 'Callback(self, _' + topic['variablename'] + '):\n')
                 globalNamespaceStr.append('\t\tself.' + topic['variablename'] + ' = _' + topic['variablename'] + '\n')
             globalNamespaceStr.append('\n\n')
 
@@ -202,13 +221,13 @@ from PyQt5.QtWidgets import QApplication
                 globalNamespaceStr.append('\t' + funcLine + '\n')
             globalNamespaceStr.append('\n\n')
 
-
     def generateTransitionClasses(self, tranStr):
         for tran in self.getAllTransitions():
             if tran.getType() == TransitionType.CONDITIONAL:
                 tranStr.append('class Tran' + str(tran.id) + '(ConditionalTransition):\n')
                 tranStr.append('\tdef __init__(self, id, destinationId, globalNamespace, namespace):\n')
-                tranStr.append('\t\tConditionalTransition.__init__(self, id, destinationId, globalNamespace, namespace)\n')
+                tranStr.append(
+                    '\t\tConditionalTransition.__init__(self, id, destinationId, globalNamespace, namespace)\n')
                 tranStr.append('\tdef checkCondition(self):\n')
                 for checkLine in tran.getCondition().split('\n'):
                     tranStr.append('\t\t' + checkLine + '\n')
@@ -216,7 +235,8 @@ from PyQt5.QtWidgets import QApplication
             elif tran.getType() == TransitionType.TEMPORAL:
                 tranStr.append('class Tran' + str(tran.id) + '(TemporalTransition):\n\n')
                 tranStr.append('\tdef __init__(self, id, destinationId, elapsedTime, globalNamespace, namespace):\n')
-                tranStr.append('\t\tTemporalTransition.__init__(self, id, destinationId, elapsedTime, globalNamespace, namespace)\n')
+                tranStr.append(
+                    '\t\tTemporalTransition.__init__(self, id, destinationId, elapsedTime, globalNamespace, namespace)\n')
             tranStr.append('\tdef runCode(self):\n')
             if len(tran.getCode()) > 0:
                 for codeLine in tran.getCode().split('\n'):
@@ -271,7 +291,7 @@ def runGui():
             if state.parent == None:
                 mainStr.append(', None)\n')
             else:
-                mainStr.append(', ' + str(state.parent.id) +')\n')
+                mainStr.append(', ' + str(state.parent.id) + ')\n')
 
         mainStr.append('\n')
 
@@ -286,13 +306,14 @@ def runGui():
         mainStr.append('\t\tgui.emitActiveStateById(0)\n\n')
 
         for state in self.getAllStates():
-            mainStr.append('\tnamespace' + str(state.id) + ' = Namespace' + str(state.id) +'(globalNamespace)\n')
+            mainStr.append('\tnamespace' + str(state.id) + ' = Namespace' + str(state.id) + '(globalNamespace)\n')
             mainStr.append('\tstate' + str(state.id) + ' = State' + str(state.id) +
                            '(' + str(state.id) + ', ' + str(state.initial) + ', globalNamespace, ')
             if state.parent == None:
                 mainStr.append('None, ' + str(state.getTimeStep()) + ', None, gui)\n')
             else:
-                mainStr.append('namespace' + str(state.parent.id)+ ', ' + str(state.getTimeStep()) + ', state' + str(state.parent.id) + ', gui)\n')
+                mainStr.append('namespace' + str(state.parent.id) + ', ' + str(state.getTimeStep()) + ', state' + str(
+                    state.parent.id) + ', gui)\n')
         mainStr.append('\n')
 
         # create and add transitions to their origins
@@ -304,7 +325,8 @@ def runGui():
                                + str(tran.origin.parent.id) + ')\n')
             elif tran.getType() == TransitionType.CONDITIONAL:
                 mainStr.append('\ttran' + str(tran.id) + ' = Tran' + str(tran.id) +
-                               '(' + str(tran.id) + ', ' + str(tran.destination.id) + ', globalNamespace, namespace' + str(tran.origin.parent.id) + ')\n')
+                               '(' + str(tran.id) + ', ' + str(
+                    tran.destination.id) + ', globalNamespace, namespace' + str(tran.origin.parent.id) + ')\n')
 
             mainStr.append('\tstate' + str(tran.origin.id) + '.addTransition(tran' + str(tran.id) + ')\n\n')
 
@@ -355,12 +377,12 @@ def runGui():
         btoolDepElement = doc.createElement('buildtool_depend')
         btoolDepElement.appendChild(doc.createTextNode('catkin'))
         root.appendChild(btoolDepElement)
-        for bdep in ['visualstates']+config.getBuildDependencies():
+        for bdep in ['visualstates'] + config.getBuildDependencies():
             bdepElement = doc.createElement('build_depend')
             bdepElement.appendChild(doc.createTextNode(bdep))
             root.appendChild(bdepElement)
 
-        for rdep in ['visualstates']+config.getRunDependencies():
+        for rdep in ['visualstates'] + config.getRunDependencies():
             rdepElement = doc.createElement('run_depend')
             rdepElement.appendChild(doc.createTextNode(rdep))
             root.appendChild(rdepElement)

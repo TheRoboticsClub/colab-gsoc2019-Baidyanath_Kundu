@@ -30,7 +30,7 @@ class CppRosGenerator(BaseGenerator):
     def __init__(self, libraries, config, states, globalNamespace):
         BaseGenerator.__init__(self, libraries, config, states, globalNamespace)
 
-    def generate(self, params, projectPath, projectName):
+    def generate(self, projectPath, projectName):
         # create source dir if not exists
         if not os.path.exists(projectPath + os.sep + 'src'):
             os.makedirs(projectPath + os.sep + 'src')
@@ -63,12 +63,6 @@ class CppRosGenerator(BaseGenerator):
 
         xmlDoc = self.generatePackageXml(self.config, projectName)
         xmlStr = xmlDoc.toprettyxml(indent='  ')
-
-        # replacing parameters with their values
-        for param in params:
-            findText = '${' + param.name + '}'
-            sourceCode = sourceCode.replace(findText, param.value)
-            guiSourceCode = guiSourceCode.replace(findText, param.value)
 
         # writing to files
         fp = open(projectPath + os.sep + 'src' + os.sep + projectName + '.h', 'w')
