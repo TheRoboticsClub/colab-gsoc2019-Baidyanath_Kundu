@@ -276,7 +276,7 @@ class VisualStates(QMainWindow):
             timerDialog.exec_()
 
     def globalNamespaceAction(self):
-        self.globalNamespaceDialog = NamespaceDialog('Global Namespace', self.globalNamespace)
+        self.globalNamespaceDialog = NamespaceDialog('Global Namespace', self.globalNamespace, True)
         self.globalNamespaceDialog.namespaceChanged.connect(self.globalNamespaceChanged)
         self.globalNamespaceDialog.exec_()
 

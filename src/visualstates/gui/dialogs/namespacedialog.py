@@ -65,9 +65,10 @@ class NamespaceDialog(QDialog):
         self.variableTab.variablesChanged.connect(self.variablesChanged)
         self.tabWidget.addTab(self.variableTab, 'Variables')
 
-        self.paramTab = ParamsTab(self.namespace.getParams())
-        self.paramTab.paramsChanged.connect(self.paramsChanged)
-        self.tabWidget.addTab(self.paramTab, 'Parameters')
+        if not globalNamespace:
+            self.paramTab = ParamsTab(self.namespace.getParams())
+            self.paramTab.paramsChanged.connect(self.paramsChanged)
+            self.tabWidget.addTab(self.paramTab, 'Parameters')
 
         mainLayout.addWidget(self.tabWidget)
 
