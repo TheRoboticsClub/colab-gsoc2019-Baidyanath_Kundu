@@ -72,11 +72,17 @@ that has to be manually created.
 - An issue needs to be created (by me) for the parameter design documentation.
   It will help in taking inputs from everyone to better the design - Issue opened 
   [here](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/issues/2)
+
 ##### Task
 - Solve the User Input Validation Issues
 - Change design of parameterization as inputs are provided on the 
   [issue](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/issues/2)
 - Add parameters to VisualStates examples
+
+##### Progress
+- Added [integer check for some input](https://github.com/JdeRobot/VisualStates/issues/116)
+- Added [Ctrl G fix](https://github.com/JdeRobot/VisualStates/issues/118)
+- Added parameters to kobuki obstacle avoidance
 
 #### Week 1-2: 27 May, 2019 - 9 June, 2019
 ##### Tasks
