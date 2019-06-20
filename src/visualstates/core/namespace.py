@@ -34,6 +34,10 @@ class Namespace:
         variablesElement = doc.createElement('variables')
         variablesElement.appendChild(doc.createTextNode(self.variables))
         namespaceElement.appendChild(variablesElement)
+        paramsElement = doc.createElement('parameters')
+        for param in self.params:
+            paramsElement.appendChild(param.createDocFromParam(doc))
+        namespaceElement.appendChild(paramsElement)
         return namespaceElement
 
     def parseElement(self, elementName, parentElement):

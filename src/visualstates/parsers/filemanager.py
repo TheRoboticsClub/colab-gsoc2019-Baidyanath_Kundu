@@ -37,16 +37,10 @@ class FileManager():
             path += '.xml'
         self.fullPath = path
 
-    def save(self, params, rootState, config, libraries, globalNamespace):
+    def save(self, rootState, config, libraries, globalNamespace):
         doc = minidom.Document()
         root = doc.createElement('VisualStates')
         doc.appendChild(root)
-
-        #save parameters
-        paramsElement = doc.createElement('parameters')
-        for param in params:
-            paramsElement.appendChild(param.createDocFromParam(doc))
-        root.appendChild(paramsElement)
 
         # save config data
         if config is not None:
