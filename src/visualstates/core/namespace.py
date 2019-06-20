@@ -99,6 +99,9 @@ class Namespace:
     def setFunctions(self, functions):
         self.functions = functions
 
+    def addParams(self, params):
+        self.params += params
+
     def getParams(self):
         return self.params
 

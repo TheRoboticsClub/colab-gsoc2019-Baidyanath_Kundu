@@ -42,19 +42,22 @@ class ImportManager():
 
     def updateAuxiliaryData(self, file, klass):
         """Wrapper upon all update functions"""
-        params, importedState, globalNamespace = self.updateParams(file[0], file[1], file[4], klass.params)
-        importedState = self.updateActiveState(importedState, klass.automataScene.stateIndex, klass.automataScene.transitionIndex, klass.activeState)
-        config = self.updateConfigs(file[2], klass.config)
-        libraries = self.updateLibraries(file[3], klass.libraries)
-        globalNamespace = self.updateNamespace(globalNamespace, klass.globalNamespace)
-        return params, importedState, config, libraries, globalNamespace
+        importedState = self.updateActiveState(file[0], klass.automataScene.stateIndex, klass.automataScene.transitionIndex, klass.activeState)
+        config = self.updateConfigs(file[1], klass.config)
+        libraries = self.updateLibraries(file[2], klass.libraries)
+        globalNamespace = self.updateNamespace(file[3], klass.globalNamespace)
+        return importedState, config, libraries, globalNamespace
 
     def updateNamespace(self, newNamespace, namespace):
         newFunctions = newNamespace.getFunctions()
         newVariables = newNamespace.getVariables()
-        if newFunctions and newVariables:
+        newParams = newNamespace.getParams()
+        if newFunctions:
             namespace.addFunctions(newFunctions)
+        if newVariables:
             namespace.addVariables(newVariables)
+        if newParams:
+            namespace.addParams(newParams)
         return namespace
 
     def updateLibraries(self, newLibraries, libraries):
@@ -97,44 +100,3 @@ class ImportManager():
     def updateTranIDs(self, importState, transitionID):
         for child in importState.getChildrenTransitions():
             child.setID(transitionID + child.getID())
-
-    def updateParams(self, newParams, importedState, globalNamespace, origParams):
-        for newParam in newParams:
-            newName = ''
-            duplicate = False
-            for origParam in origParams:
-                if origParam.name == newParam.name :
-                    dialog = DuplicateParamsDialog('Resolve Duplicate Parameter', newParam, origParam, newParams, origParams)
-                    dialog.exec_()
-                    newName = dialog.getName()
-                    duplicate = True
-            if duplicate:
-                if newName != newParam.name :
-                    importedState, globalNamespace = self.replaceParamName(newParam.name, newName, importedState, globalNamespace)
-                    newParam.name = newName
-                    origParams.append(newParam)
-            else:
-                origParams.append(newParam)
-        dialog = ParamsDialog('Imported Parameters', newParams, False)
-        dialog.exec_()
-
-        return origParams, importedState, globalNamespace
-
-    def replaceParamName(self, oldName, newName, importedState, globalNamespace):
-        findText = '${'+oldName+'}'
-        replaceText = '${'+newName+'}'
-        self.replaceStateParams(findText, replaceText, importedState)
-        (globalNamespace).setFunctions(((globalNamespace).getFunctions()).replace(findText, replaceText))
-        (globalNamespace).setVariables(((globalNamespace).getVariables()).replace(findText, replaceText))
-
-        return importedState, globalNamespace
-
-    def replaceStateParams(self, findText, replaceText, state):
-        (state.getNamespace()).setFunctions(((state.getNamespace()).getFunctions()).replace(findText, replaceText))
-        (state.getNamespace()).setVariables(((state.getNamespace()).getVariables()).replace(findText, replaceText))
-        for trans in state.getChildrenTransitions():
-            trans.setCode(trans.getCode().replace(findText, replaceText))
-            trans.setCondition(trans.getCondition().replace(findText, replaceText))
-        for child in state.getChildren():
-            child.setCode(child.getCode().replace(findText, replaceText))
-            self.replaceStateParams(findText, replaceText, child)

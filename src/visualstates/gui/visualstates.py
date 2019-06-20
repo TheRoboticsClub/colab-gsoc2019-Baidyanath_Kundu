@@ -264,7 +264,7 @@ class VisualStates(QMainWindow):
                     childState.setInitial(False)
 
             # Update importing Namespaces
-            self.params, importedState, self.config, self.libraries, self.globalNamespace = self.importManager.updateAuxiliaryData(file, self)
+            importedState, self.config, self.libraries, self.globalNamespace = self.importManager.updateAuxiliaryData(file, self)
             self.treeModel.loadFromRoot(importedState, self.activeState)
             self.automataScene.displayState(self.activeState)
             self.automataScene.setLastIndexes(self.rootState)

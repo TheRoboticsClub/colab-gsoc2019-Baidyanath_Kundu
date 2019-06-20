@@ -20,9 +20,9 @@
   '''
 
 from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtWidgets import QDialog, QLineEdit, QVBoxLayout, QHBoxLayout, QPushButton, \
-    QWidget, QApplication, QLabel, QComboBox, QRadioButton, \
-    QFormLayout, QTabWidget, QScrollArea, QGroupBox, QBoxLayout
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QPushButton, \
+    QWidget, QLabel, QRadioButton, \
+    QTabWidget, QScrollArea, QGroupBox, QBoxLayout
 from PyQt5.QtGui import QFontDatabase, QColor, QFontMetrics
 from PyQt5.Qsci import QsciScintilla, QsciLexerPython, QsciLexerCPP
 from visualstates.gui.dialogs.paramprop import ParamPropDialog
