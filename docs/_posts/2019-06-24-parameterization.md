@@ -1,4 +1,4 @@
-# Parameterization
+# Parameterization of VisualStates
 ## Introduction
 Visual States tool was created to make the production of automata behaviours easier and faster. 
 Some of these states are common between behaviours and only some variables are needed to be changed to add them to the behaviour.
