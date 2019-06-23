@@ -30,7 +30,7 @@ class PythonRosGenerator(BaseGenerator):
     def __init__(self, libraries, config, states, globalNamespace):
         BaseGenerator.__init__(self, libraries, config, states, globalNamespace)
 
-    def generate(self, params, projectPath, projectName):
+    def generate(self, projectPath, projectName):
         stringList = []
         self.generateImports(stringList)
         self.generateSignalHandling(stringList)
@@ -46,11 +46,6 @@ class PythonRosGenerator(BaseGenerator):
 
         xmlDoc = self.generatePackageXml(self.config, projectName)
         xmlStr = xmlDoc.toprettyxml(indent='  ')
-
-        # replacing parameters with their values
-        for param in params:
-            findText = '${' + param.name + '}'
-            sourceCode = sourceCode.replace(findText, param.value)
 
         # writing to files
         fp = open(projectPath + os.sep + projectName + '.py', 'w')
@@ -162,7 +157,7 @@ from PyQt5.QtWidgets import QApplication
                 else:
                     varValue = param.value
 
-                stateStr.append('\t\t' + param.name + ' = ' + varValue + '\n')
+                stateStr.append('\t\tself.' + param.name + ' = ' + varValue + '\n')
         stateStr.append('\n')
 
         if (len(state.namespace.functions) > 0):

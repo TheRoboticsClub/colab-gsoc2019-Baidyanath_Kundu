@@ -30,7 +30,7 @@ class CPPParser():
         funcNames = []
         codes = []
         funcExists = True
-        while funcExists and len(funcStr) > 0 and funcStr.index('{') >= 0:
+        while funcExists and len(funcStr) > 0 and funcStr.find('{') >= 0:
             funcStr = funcStr.strip()
             funcStartIndex = funcStr.index('{')
             funcSignature = funcStr[0:funcStartIndex].strip()

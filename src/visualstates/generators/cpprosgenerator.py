@@ -183,7 +183,7 @@ class CppRosGenerator(BaseGenerator):
             classStr.append('class Namespace' + str(state.id) + ' {\n')
             classStr.append('public:\n')
             classStr.append('\tGlobalNamespace* globalNamespace;\n')
-            types, varNames, initialValues = CPPParser.parseVariables(state.getNamespace().variables)
+            types, varNames, initialValues = CPPParser.parseVariables(state.getNamespace().variables, state.getNamespace().params)
             for i in range(len(types)):
                 classStr.append(types[i] + ' ' + varNames[i] + ';\n')
             classStr.append('\n')
