@@ -80,6 +80,7 @@ that has to be manually created.
 #### Progress
 - Converted the documentation to a blog format. [Link](https://theroboticsclub.github.io/colab-gsoc2019-Baidyanath_Kundu/)
 - Made necessary changes to parameterization code. [Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/1)
+- Made a demonstration video for the parameterization of visual states. [Link](https://www.youtube.com/watch?v=cRWVHkjcYvw)
 
 #### Week 3: 10 June 2019 - 16 June 2019
 ##### Discussion
