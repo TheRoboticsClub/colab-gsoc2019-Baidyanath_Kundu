@@ -4,6 +4,9 @@ Visual States tool was created to make the production of automata behaviours eas
 Some of these states are common between behaviours and only some variables are needed to be changed to add them to the behaviour.
 Parameterization of VisualStates makes it easier to tweak these variables to perfection. 
 
+## Demonstration video
+The video is available [here](https://www.youtube.com/watch?v=cRWVHkjcYvw)
+
 ## Design 
 - Parameters have been designed to act and be used just like local variables are done in code
 - They are added via a tab named Paramters in the Local Namespace dialog and are not available in the Global Namespace dialog. 
@@ -18,7 +21,7 @@ Parameters help to extend the use of of the behaviors made. It helps others by p
 to the variables that can be changed to modify the behaviour to their needs. 
 
 ## Future development 
-Parameters will act as a base for selective import of states and online importer. 
+Parameters will be an essential part of selective import of states and the online importer. 
 
 ## Problems encountered and lessons learnt
 - The biggest problem in any project that can occur is miscommunication and it
