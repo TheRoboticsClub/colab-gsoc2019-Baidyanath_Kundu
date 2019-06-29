@@ -62,6 +62,31 @@ class FileManager():
         with open(self.fullPath, 'w') as f:
             f.write(xmlStr)
 
+    def generateXml(self, rootState, config, libraries, globalNamespace):
+        doc = minidom.Document()
+        root = doc.createElement('VisualStates')
+        doc.appendChild(root)
+
+        # save config data
+        if config is not None:
+            root.appendChild(config.createNode(doc))
+
+        # save global namespace
+        globalNamespaceElement = globalNamespace.createNode(doc, globalNamespace=True)
+        root.appendChild(globalNamespaceElement)
+
+        # save libraries
+        libraryElement = doc.createElement('libraries')
+        for lib in libraries:
+            libElement = doc.createElement('library')
+            libElement.appendChild(doc.createTextNode(lib))
+            libraryElement.appendChild(libElement)
+        root.appendChild(libraryElement)
+
+        root.appendChild(self.createDocFromState(rootState, doc))
+        xmlStr = doc.toprettyxml(indent='  ')
+        return xmlStr
+
     def createDocFromState(self, state, doc):
         stateElement = state.createElement(doc)
         return stateElement

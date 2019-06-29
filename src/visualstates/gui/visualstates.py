@@ -27,6 +27,7 @@ from .transition.timerdialog import TimerDialog
 from .dialogs.namespacedialog import NamespaceDialog
 from .dialogs.librariesdialog import LibrariesDialog
 from .dialogs.rosconfigdialog import RosConfigDialog
+from .dialogs.libraryexportdialog import FileExportDialog, GithubCredentialsDialog
 from ..configs.rosconfig import RosConfig
 from ..generators.cpprosgenerator import CppRosGenerator
 from ..generators.pythonrosgenerator import PythonRosGenerator
@@ -99,6 +100,10 @@ class VisualStates(QMainWindow):
         saveAsAction.setStatusTip('Save Visual States as New One')
         saveAsAction.triggered.connect(self.saveAsAction)
 
+        libExportAction = QAction('&Library Export', self)
+        libExportAction.setStatusTip('Export to Online Library of Automata')
+        libExportAction.triggered.connect(self.libExportAction)
+
         quitAction = QAction('&Quit', self)
         quitAction.setShortcut('Ctrl+Q')
         quitAction.setStatusTip('Quit Visual States')
@@ -164,6 +169,7 @@ class VisualStates(QMainWindow):
         archieveMenu.addAction(importAction)
         archieveMenu.addAction(saveAction)
         archieveMenu.addAction(saveAsAction)
+        archieveMenu.addAction(libExportAction)
         archieveMenu.addAction(quitAction)
 
         figuresMenu = menubar.addMenu('&Figures')
@@ -269,6 +275,16 @@ class VisualStates(QMainWindow):
             self.treeModel.loadFromRoot(importedState, self.activeState)
             self.automataScene.displayState(self.activeState)
             self.automataScene.setLastIndexes(self.rootState)
+
+    def libExportAction(self):
+        xmlFile = self.fileManager.generateXml(self.rootState, self.config, self.libraries, self.globalNamespace)
+        githubCredDialog = GithubCredentialsDialog()
+        if githubCredDialog.exec_():
+            username = githubCredDialog.username
+            password = githubCredDialog.password
+            fileExportDialog = FileExportDialog(username, password, xmlFile)
+            if fileExportDialog.exec_():
+                self.showInfo("Success", "Behaviour successfully exported.")
 
     def timerAction(self):
         if self.activeState is not None:
