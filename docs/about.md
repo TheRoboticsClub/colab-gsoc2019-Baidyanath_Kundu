@@ -16,11 +16,12 @@ that has to be manually created.
 |----:|---------------------------------------------|:------:|:---------------------------:|
 |     |**Phase 1: Parameterization of VisualStates**|        |May 27, 2019 - June 16, 2019 |
 |1.   |Add the feature to Visual States Tool        | Done   |                             |
-|2.   |Create example with parameters               |        |                             |
+|2.   |Create example with parameters               | Done   |                             |
 |     |**Phase 2: Creating a library of automatas** |        |June 17, 2019 - July 21, 2019|
-|1.   |Create the repository for online library     |        |                             |
-|2.   |Add feature to import from online library    |        |                             |
-|3.   |Create examples for the library              |        |                             |
+|1.   |Create the repository for online library     | Done   |                             |
+|2.   |Add feature to export to online library      | Done   |                             |
+|3.   |Add feature to import from online library    |        |                             |
+|4.   |Create examples for the library              |        |                             |
 
 ## People Involved
 - [Baidyanath Kundu](mailto:kundubaidya99@gmail.com) [GSoC Student]

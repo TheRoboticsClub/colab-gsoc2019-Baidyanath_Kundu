@@ -45,15 +45,36 @@ that has to be manually created.
 |----:|---------------------------------------------|:------:|:---------------------------:|
 |     |**Phase 1: Parameterization of VisualStates**|        |May 27, 2019 - June 16, 2019 |
 |1.   |Add the feature to Visual States Tool        | Done   |                             |
-|2.   |Create example with parameters               |        |                             |
+|2.   |Create example with parameters               | Done   |                             |
 |     |**Phase 2: Creating a library of automatas** |        |June 17, 2019 - July 21, 2019|
-|1.   |Create the repository for online library     |        |                             |
-|2.   |Add feature to import from online library    |        |                             |
-|3.   |Create examples for the library              |        |                             |
+|1.   |Create the repository for online library     | Done   |                             |
+|2.   |Add feature to export to online library      | Done   |                             |
+|3.   |Add feature to import from online library    |        |                             |
+|4.   |Create examples for the library              |        |                             |
 
 <a name="documentation"/>
 
 ## Documentation
+#### Week 5: 24 June 2019 - 30 June 2019
+##### Discussion
+- Design of online importer and exporter
+    - PyGitHub library will be used to access the repository
+    - It could be better to show the tree of states with the parameters instead of a snapshot
+    - There will be a main xml file in the repository containing the names, descriptions and 
+      the folder name in which the behaviour and the snapshot/tree of states is present
+    - A demo repository will be created by me which will be used to create the online importer
+      and exporter and once its complete we will shift to a jderobot repository.
+- Design of parameterization of VisualStates
+    -A list of added parameters need to be displayed during the import of a file
+
+#### Task
+- Implement the design of the exporter and importer
+- Display the list of added parameters during import
+
+#### Progress
+- Created the demo repository for the library. [Link](https://github.com/sudo-panda/automata-library)
+- Added the exporter to visual states. [Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/5)
+
 #### Week 4: 17 June 2019 - 23 June 2019
 ##### Discussion
 - The documentation will be better with a blog style appearance rather than the current one.
