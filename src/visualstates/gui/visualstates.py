@@ -28,12 +28,12 @@ from .dialogs.namespacedialog import NamespaceDialog
 from .dialogs.librariesdialog import LibrariesDialog
 from .dialogs.rosconfigdialog import RosConfigDialog
 from .dialogs.libraryexportdialog import FileExportDialog, GithubCredentialsDialog
+from .dialogs.libraryimportdialog import FileImportDialog
 from ..configs.rosconfig import RosConfig
 from ..generators.cpprosgenerator import CppRosGenerator
 from ..generators.pythonrosgenerator import PythonRosGenerator
 from ..configs.rospackage import getPackagePath
 from .dialogs.aboutdialog import AboutDialog
-
 
 class VisualStates(QMainWindow):
     def __init__(self, parent=None):
@@ -99,6 +99,10 @@ class VisualStates(QMainWindow):
         saveAsAction.setShortcut('Ctrl+S')
         saveAsAction.setStatusTip('Save Visual States as New One')
         saveAsAction.triggered.connect(self.saveAsAction)
+
+        libImportAction = QAction('&Library Import', self)
+        libImportAction.setStatusTip('Import from Online Library of Automatas')
+        libImportAction.triggered.connect(self.libImportAction)
 
         libExportAction = QAction('&Library Export', self)
         libExportAction.setStatusTip('Export to Online Library of Automata')
@@ -167,6 +171,7 @@ class VisualStates(QMainWindow):
         archieveMenu.addAction(newAction)
         archieveMenu.addAction(openAction)
         archieveMenu.addAction(importAction)
+        archieveMenu.addAction(libImportAction)
         archieveMenu.addAction(saveAction)
         archieveMenu.addAction(saveAsAction)
         archieveMenu.addAction(libExportAction)
@@ -275,6 +280,24 @@ class VisualStates(QMainWindow):
             self.treeModel.loadFromRoot(importedState, self.activeState)
             self.automataScene.displayState(self.activeState)
             self.automataScene.setLastIndexes(self.rootState)
+
+    def libImportAction(self):
+        fileImportDialog = FileImportDialog()
+        fileImportDialog.fileStr.connect(self.libImportFile)
+        if fileImportDialog.exec_():
+            pass
+
+    def libImportFile(self, fileStr):
+        file = self.fileManager.parse(fileStr)
+        if self.activeState.getInitialChild() is not None:
+            for childState in file[0].getChildren():
+                childState.setInitial(False)
+
+        importedState, self.config, self.libraries, self.globalNamespace = self.importManager.updateAuxiliaryData(file,
+                                                                                                                  self)
+        self.treeModel.loadFromRoot(importedState, self.activeState)
+        self.automataScene.displayState(self.activeState)
+        self.automataScene.setLastIndexes(self.rootState)
 
     def libExportAction(self):
         xmlFile = self.fileManager.generateXml(self.rootState, self.config, self.libraries, self.globalNamespace)

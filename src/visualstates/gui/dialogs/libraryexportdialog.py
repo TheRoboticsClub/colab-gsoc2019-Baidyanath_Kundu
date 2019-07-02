@@ -19,6 +19,7 @@
   '''
 
 import re
+import threading
 from xml.dom import minidom
 from github import Github
 from github.GithubException import BadCredentialsException, GithubException

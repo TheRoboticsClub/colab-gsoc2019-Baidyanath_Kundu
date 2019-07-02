@@ -120,6 +120,34 @@ class FileManager():
 
         return rootState, config, libraries, globalNamespace
 
+    def parse(self, fileStr):
+        doc = minidom.parseString(fileStr)
+
+        globalNamespaceNode = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('global_namespace')[0]
+        globalNamespace = Namespace('', '')
+        globalNamespace.parse(globalNamespaceNode)
+
+        rootNode = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('state')[0]
+        rootState = State(0, 'root', True, None)
+        rootState.parse(rootNode)
+
+        # parse configs
+        config = None
+        if len(doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('config')) > 0:
+            configElement = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('config')[0]
+            config = RosConfig()
+            config.loadNode(configElement)
+
+        libraries = []
+        # parse libraries
+        libraryElements = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('libraries')
+        if len(libraryElements) > 0:
+            libraryElements = libraryElements[0].getElementsByTagName('library')
+            for libElement in libraryElements:
+                libraries.append(libElement.childNodes[0].nodeValue)
+
+        return rootState, config, libraries, globalNamespace
+
     def hasFile(self):
         return len(self.fullPath) > 0
 
