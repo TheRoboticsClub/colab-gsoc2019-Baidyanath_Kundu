@@ -57,13 +57,14 @@ class Parameter:
                 self.name = str(value)
             elif name == 'type':
                 self.type = str(value)
-        try:
+
+        if len(element.getElementsByTagName('value')[0].childNodes) == 0:
             self.value = str(element.getElementsByTagName('value')[0].childNodes[0].nodeValue)
-        except IndexError:
+        else:
             self.desc = ''
-        try:
+        if len(element.getElementsByTagName('description')[0].childNodes) == 0:
             self.desc = str(element.getElementsByTagName('description')[0].childNodes[0].nodeValue)
-        except IndexError:
+        else:
             self.desc = ''
 
 def isTypeEqualValue(type, value):
