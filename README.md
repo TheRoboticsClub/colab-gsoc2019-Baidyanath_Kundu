@@ -55,6 +55,20 @@ that has to be manually created.
 <a name="documentation"/>
 
 ## Documentation
+#### Week 6: 1 July 2019 - 7 July 2019
+##### Task
+- Add a dialog to display imported parameters
+- Add importer for the online library
+
+##### Progress
+- Added importer for the online library.
+[Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/5)
+- Added check to prevent duplicate inputs being added to the list. 
+[Issue](https://github.com/JdeRobot/VisualStates/issues/119)
+- Added XML Validation. [Issue](https://github.com/JdeRobot/VisualStates/issues/117)
+- Added dialog to display imported parameters. 
+[Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/1)
+
 #### Week 5: 24 June 2019 - 30 June 2019
 ##### Discussion
 - Design of online importer and exporter
