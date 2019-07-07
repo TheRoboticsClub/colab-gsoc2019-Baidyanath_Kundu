@@ -27,6 +27,7 @@ from .transition.timerdialog import TimerDialog
 from .dialogs.namespacedialog import NamespaceDialog
 from .dialogs.librariesdialog import LibrariesDialog
 from .dialogs.rosconfigdialog import RosConfigDialog
+from .dialogs.paramsdialog import ImportedParamsDialog
 from ..configs.rosconfig import RosConfig
 from ..generators.cpprosgenerator import CppRosGenerator
 from ..generators.pythonrosgenerator import PythonRosGenerator
@@ -260,7 +261,7 @@ class VisualStates(QMainWindow):
             # if the current active state already has an initial state make sure that
             # there will not be any initial state in the imported state
             if self.activeState.getInitialChild() is not None:
-                for childState in file[1].getChildren():
+                for childState in file[0].getChildren():
                     childState.setInitial(False)
 
             # Update importing Namespaces
@@ -268,6 +269,8 @@ class VisualStates(QMainWindow):
             self.treeModel.loadFromRoot(importedState, self.activeState)
             self.automataScene.displayState(self.activeState)
             self.automataScene.setLastIndexes(self.rootState)
+            displayParamDialog = ImportedParamsDialog("Imported Parameters", importedState)
+            displayParamDialog.exec_()
 
     def timerAction(self):
         if self.activeState is not None:

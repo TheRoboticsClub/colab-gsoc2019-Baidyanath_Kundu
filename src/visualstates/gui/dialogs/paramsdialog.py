@@ -22,50 +22,24 @@ from PyQt5.QtWidgets import QDialog, QLabel,  \
     QPushButton, QApplication, QHBoxLayout, QVBoxLayout, \
     QScrollArea, QGroupBox, QBoxLayout
 from PyQt5.QtCore import pyqtSignal, Qt
-from visualstates.gui.dialogs.paramprop import ParamPropDialog
 from visualstates.gui.tools.elidedlabel import ElidedLabel
 
 
-class ParamsDialog(QDialog):
+class ImportedParamsDialog(QDialog):
     paramsChanged = pyqtSignal(list)
 
-    def __init__(self, name, params, modify=True):
+    def __init__(self, name, rootState):
         super(QDialog, self).__init__()
         self.setWindowTitle(name)
-        self.modify = modify
-        self.params = params
+        self.rootState = rootState
         self.paramUIs = []
         self.removeIds = []
-        self.setFixedSize(800, 500)
+        self.setMinimumSize(800, 500)
 
         self.drawWindow()
 
     def drawWindow(self):
         VLayout = QVBoxLayout()
-
-        rowLayout = QHBoxLayout()
-
-        rowLayout.setAlignment(Qt.AlignLeft)
-        rowLayout.addSpacing(10)
-        titleLblStyleSheet = 'QLabel {font-weight: bold;}'
-        nameLbl = QLabel('Name')
-        nameLbl.setStyleSheet(titleLblStyleSheet)
-        nameLbl.setFixedWidth(100)
-        rowLayout.addWidget(nameLbl)
-        typeLbl = QLabel('Type')
-        typeLbl.setStyleSheet(titleLblStyleSheet)
-        typeLbl.setFixedWidth(60)
-        rowLayout.addWidget(typeLbl)
-        valueLbl = QLabel('Value')
-        valueLbl.setStyleSheet(titleLblStyleSheet)
-        valueLbl.setFixedWidth(100)
-        rowLayout.addWidget(valueLbl)
-        descLbl = QLabel('Description')
-        descLbl.setStyleSheet(titleLblStyleSheet)
-        descLbl.setFixedWidth(280)
-        rowLayout.addWidget(descLbl)
-
-        VLayout.addLayout(rowLayout)
 
         scrollArea = QScrollArea()
         scrollArea.setWidgetResizable(True)
@@ -82,108 +56,110 @@ class ParamsDialog(QDialog):
 
         btnLayout = QHBoxLayout()
         btnLayout.setAlignment(Qt.AlignRight)
-        if self.modify:
-            newBtn = QPushButton("New")
-            newBtn.setFixedWidth(80)
-            newBtn.clicked.connect(self.newClicked)
-            btnLayout.addWidget(newBtn)
         doneBtn = QPushButton("Done")
         doneBtn.setFixedWidth(80)
         doneBtn.clicked.connect(self.doneClicked)
         btnLayout.addWidget(doneBtn)
         VLayout.addLayout(btnLayout)
-        for i in range(len(self.params)):
-            self.addParam(i)
+        self.addStates(self.scrollVlayout, self.rootState, root=True)
         self.setLayout(VLayout)
 
-    def newClicked(self):
-        dialog = ParamPropDialog(params=self.params)
-        dialog.paramAdded.connect(self.paramAddedHandler)
-        dialog.exec_()
+    def addStates(self, layout, state, root=False):
+        titleLblStyleSheet = 'QLabel {font-weight:bold;}'
+        childTitleLblStyleSheet = 'QLabel {font:italic; font-weight:bold;}'
+        bulletLblStyleSheet = 'QLabel {font-size: 25px; font-weight:bold;}'
+        if not root:
+            rowLayout = QHBoxLayout()
+            rowLayout.addSpacing(10)
+            bulletLbl = QLabel(u"\u2022")
+            bulletLbl.setFixedWidth(10)
+            bulletLbl.setStyleSheet(bulletLblStyleSheet)
+            rowLayout.addWidget(bulletLbl)
+            nameLbl = QLabel(state.getName())
+            nameLbl.setMinimumWidth(100)
+            nameLbl.setStyleSheet(titleLblStyleSheet)
+            rowLayout.addWidget(nameLbl)
+            layout.addLayout(rowLayout)
 
-    def addParam(self, id):
-        param = self.params[id]
+            #if len(state.getNamespace().getParams()) > 0 or len(state.getChildren()) > 0:
+            rowLayout = QHBoxLayout()
+            rowLayout.addSpacing(14)
+            newLayout = QVBoxLayout()
+            newLayout.setDirection(QBoxLayout.TopToBottom)
+            newLayout.setAlignment(Qt.AlignTop)
+            dummyBox = QGroupBox()
+            dummyBox.setStyleSheet('QGroupBox {padding: 0px; margin: 0px; border-left: 1px solid gray; '
+                                   'border-top: 0px;}')
+            dummyBox.setLayout(newLayout)
+            rowLayout.addWidget(dummyBox)
+            layout.addLayout(rowLayout)
+        else:
+            newLayout = layout
+
+        if len(state.getNamespace().getParams()) > 0:
+            paramTitleLbl = QLabel('Parameters:')
+            paramTitleLbl.setStyleSheet(childTitleLblStyleSheet)
+            newLayout.addWidget(paramTitleLbl)
+            for param in state.getNamespace().getParams():
+                self.addParam(newLayout, param)
+
+        if len(state.getChildren()) > 0:
+            childStatesTitleLbl = QLabel('Child States:')
+            childStatesTitleLbl.setStyleSheet(childTitleLblStyleSheet)
+            newLayout.addWidget(childStatesTitleLbl)
+            for child in state.getChildren():
+                self.addStates(newLayout, child)
+
+        return layout
+
+    def addParam(self, layout, param):
+        titleLblStyleSheet = 'QLabel {font: italic;}'
         rowLayout = QHBoxLayout()
+        rowLayout.addSpacing(10)
+        titleLbl = QLabel('Name:')
+        titleLbl.setStyleSheet(titleLblStyleSheet)
+        titleLbl.setFixedWidth(43)
+        rowLayout.addWidget(titleLbl)
         nameLbl = ElidedLabel(param.name)
         nameLbl.setToolTip(param.name)
-        nameLbl.setFixedWidth(100)
+        nameLbl.setFixedWidth(150)
         rowLayout.addWidget(nameLbl)
+        rowLayout.addSpacing(5)
+        titleLbl = QLabel('Type:')
+        titleLbl.setStyleSheet(titleLblStyleSheet)
+        titleLbl.setFixedWidth(36)
+        rowLayout.addWidget(titleLbl)
         typeLbl = ElidedLabel(param.type)
         typeLbl.setFixedWidth(60)
         rowLayout.addWidget(typeLbl)
+        rowLayout.addSpacing(5)
+        titleLbl = QLabel('Value:')
+        titleLbl.setStyleSheet(titleLblStyleSheet)
+        titleLbl.setFixedWidth(47)
+        rowLayout.addWidget(titleLbl)
         valueLbl = ElidedLabel(param.value)
         valueLbl.setToolTip(param.value)
         valueLbl.setFixedWidth(100)
         rowLayout.addWidget(valueLbl)
+        rowLayout.addSpacing(5)
+        titleLbl = QLabel('Description:')
+        titleLbl.setStyleSheet(titleLblStyleSheet)
+        titleLbl.setFixedWidth(80)
+        rowLayout.addWidget(titleLbl)
         descLbl = ElidedLabel(param.desc)
         descLbl.setAlignment(Qt.AlignTop)
         descLbl.setFixedHeight(17)
         descLbl.setToolTip(param.desc)
-        if self.modify:
-            descLbl.setFixedWidth(280)
-        else:
-            descLbl.setFixedWidth(440)
+        descLbl.setMinimumWidth(400)
         rowLayout.addWidget(descLbl)
 
-        if self.modify:
-            editBtn = QPushButton('Edit')
-            editBtn.setFixedWidth(80)
-            editBtn.setObjectName(str(id))
-            editBtn.clicked.connect(self.editHandler)
-            rowLayout.addWidget(editBtn)
-            removeBtn = QPushButton('Remove')
-            removeBtn.setFixedWidth(80)
-            removeBtn.setObjectName(str(id))
-            removeBtn.clicked.connect(self.removeHandler)
-            rowLayout.addWidget(removeBtn)
-
-        self.scrollVlayout.addLayout(rowLayout)
-        if self.modify:
-            UI = [nameLbl, typeLbl, valueLbl, descLbl, editBtn, removeBtn]
-            self.paramUIs.append(UI)
-
-    def paramAddedHandler(self, params):
-        self.params = params
-        self.addParam(len(self.params)-1)
-
-    def removeHandler(self):
-        removeId = int(self.sender().objectName())
-        self.removeIds.append(removeId)
-        for uiItem in self.paramUIs[removeId]:
-            uiItem.deleteLater()
-
-
-    def editHandler(self):
-        editID = int(self.sender().objectName())
-        dialog = ParamPropDialog(params=self.params, id=editID)
-        dialog.paramUpdated.connect(self.paramUpdatedHandler)
-        dialog.exec_()
-
-    def paramUpdatedHandler(self, params, id):
-        self.params = params
-        param = self.params[id]
-        UI = self.paramUIs[id]
-        UI[0].setText(param.name)
-        UI[0].setToolTip(param.name)
-        UI[1].setText(param.type)
-        UI[1].setToolTip(param.type)
-        UI[2].setText(param.value)
-        UI[2].setToolTip(param.value)
-        UI[3].setText(param.desc)
-        UI[3].setToolTip(param.desc)
+        layout.addLayout(rowLayout)
 
 
     def doneClicked(self):
-        if self.modify:
-            count = 0
-            for id in self.removeIds:
-                id = id - count
-                self.params.pop(id)
-                count += 1
-            self.paramsChanged.emit(self.params)
-        self.close()
+        self.accept()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    dialog = ParamsDialog('Parameters', params=[])
+    dialog = ImportedParamsDialog('Parameters')
     dialog.exec_()

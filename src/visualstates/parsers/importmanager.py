@@ -19,8 +19,6 @@
   '''
 
 from visualstates.configs.rosconfig import RosConfig
-from visualstates.gui.dialogs.dupparamsdialog import DuplicateParamsDialog
-from visualstates.gui.dialogs.paramsdialog import ParamsDialog
 
 class ImportManager():
     """
