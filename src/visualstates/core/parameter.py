@@ -61,7 +61,7 @@ class Parameter:
         if len(element.getElementsByTagName('value')[0].childNodes) > 0:
             self.value = str(element.getElementsByTagName('value')[0].childNodes[0].nodeValue)
         else:
-            self.desc = ''
+            self.value = ''
         if len(element.getElementsByTagName('description')[0].childNodes) > 0:
             self.desc = str(element.getElementsByTagName('description')[0].childNodes[0].nodeValue)
         else:
