@@ -27,8 +27,9 @@ from .transition.timerdialog import TimerDialog
 from .dialogs.namespacedialog import NamespaceDialog
 from .dialogs.librariesdialog import LibrariesDialog
 from .dialogs.rosconfigdialog import RosConfigDialog
-from .dialogs.libraryexportdialog import FileExportDialog, GithubCredentialsDialog
-from .dialogs.libraryimportdialog import FileImportDialog
+from src.visualstates.gui.dialogs.libraryexport.libraryexportdialog import LibraryExportDialog
+from src.visualstates.gui.dialogs.libraryexport.githubcreddialog import GithubCredentialsDialog
+from .dialogs.libraryimport.libraryimportdialog import FileImportDialog
 from ..configs.rosconfig import RosConfig
 from ..generators.cpprosgenerator import CppRosGenerator
 from ..generators.pythonrosgenerator import PythonRosGenerator
@@ -284,8 +285,7 @@ class VisualStates(QMainWindow):
     def libImportAction(self):
         fileImportDialog = FileImportDialog()
         fileImportDialog.fileStr.connect(self.libImportFile)
-        if fileImportDialog.exec_():
-            pass
+        fileImportDialog.exec_()
 
     def libImportFile(self, fileStr):
         file = self.fileManager.parse(fileStr)
@@ -305,7 +305,7 @@ class VisualStates(QMainWindow):
         if githubCredDialog.exec_():
             username = githubCredDialog.username
             password = githubCredDialog.password
-            fileExportDialog = FileExportDialog(username, password, xmlFile)
+            fileExportDialog = LibraryExportDialog(username, password, xmlFile)
             if fileExportDialog.exec_():
                 self.showInfo("Success", "Behaviour successfully exported.")
 

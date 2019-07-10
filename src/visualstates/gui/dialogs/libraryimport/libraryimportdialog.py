@@ -19,16 +19,14 @@
   '''
 
 from xml.dom import minidom
-from github import Github
-import threading
-from github.GithubException import BadCredentialsException, GithubException
-from requests.exceptions import ConnectionError, ReadTimeout
 import sys
 from PyQt5.QtWidgets import QDialog, QLabel, QPushButton,\
     QApplication, QHBoxLayout, QVBoxLayout, QScrollArea, \
-    QGroupBox, QBoxLayout, QPlainTextEdit
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from ..tools.elidedlabel import ElidedLabel
+    QGroupBox, QBoxLayout
+from PyQt5.QtCore import Qt, pyqtSignal
+from src.visualstates.gui.tools.elidedlabel import ElidedLabel
+from src.visualstates.githubtools.downloadfile import DownloadFile
+from src.visualstates.gui.dialogs.libraryimport.filepropdialog import FilePropertiesDialog
 
 class FileImportDialog(QDialog):
     fileStr = pyqtSignal('QString')
@@ -78,11 +76,18 @@ class FileImportDialog(QDialog):
 
         self.setLayout(VLayout)
         self.show()
-        getCatalogue = GetCatalogue()
-        getCatalogue.xmlStr.connect(self.displayCatalogue)
-        getCatalogue.run()
+
+        self.setStatus("Fetching Catalogue . . .")
+
+        self.getCatalogue = DownloadFile("Catalogue.xml")
+        self.getCatalogue.fileStr.connect(self.displayCatalogue)
+        self.getCatalogue.start()
 
     def displayCatalogue(self, catalogue):
+        if catalogue == "":
+            self.setStatus("Error occurred in fetching Catalogue")
+            return
+        self.setStatus("Displaying Catalogue . . .")
         self.doc = minidom.parseString(catalogue)
         behaviourList = self.doc.getElementsByTagName('Catalogue')[0].getElementsByTagName('behaviour')
         count = 0
@@ -91,6 +96,7 @@ class FileImportDialog(QDialog):
             description = behElement.getElementsByTagName('description')[0].childNodes[0].nodeValue
             self.addBehaviour(count, name, description)
             count += 1
+        self.setStatus("")
 
     def addBehaviour(self, id, name, description):
         nameLblStyleSheet = 'QLabel {font-weight: bold;}'
@@ -123,84 +129,17 @@ class FileImportDialog(QDialog):
         behElement = self.doc.getElementsByTagName('Catalogue')[0].getElementsByTagName('behaviour')[id]
         name = behElement.getAttribute('name')
         description = behElement.getElementsByTagName('description')[0].childNodes[0].nodeValue
-        behDialog = BehaviourDialog(name, description)
+        behDialog = FilePropertiesDialog(name, description)
         if behDialog.exec_():
             self.fileStr.emit(behDialog.fileStr)
             self.accept()
 
-    def cancelClicked(self):
-        self.close()
-
-class BehaviourDialog(QDialog):
-    def __init__(self, name, description):
-        super(QDialog, self).__init__()
-        self.setMinimumSize(600, 500)
-        self.name = name
-        self.description = description
-        self.fileStr = ''
-        self.setWindowTitle(self.name)
-        self.drawWindow()
-
-    def drawWindow(self):
-        VLayout = QVBoxLayout()
-        titleLblStyleSheet = 'QLabel {font-weight: bold;}'
-
-        rowLayout = QHBoxLayout()
-        titleLbl = QLabel('Description:')
-        titleLbl.setMinimumWidth(200)
-        titleLbl.setStyleSheet(titleLblStyleSheet)
-        rowLayout.addWidget(titleLbl)
-        titleLbl = QLabel('Snapshot:')
-        titleLbl.setMinimumWidth(200)
-        titleLbl.setStyleSheet(titleLblStyleSheet)
-        rowLayout.addWidget(titleLbl)
-        VLayout.addLayout(rowLayout)
-
-        rowLayout = QHBoxLayout()
-        descBox = QPlainTextEdit(self.description)
-        descBox.setReadOnly(True)
-        rowLayout.addWidget(descBox)
-        descBox = QPlainTextEdit('')
-        rowLayout.addWidget(descBox)
-        VLayout.addLayout(rowLayout)
-
-        btnLayout = QHBoxLayout()
-        btnLayout.setAlignment(Qt.AlignRight)
-        importBtn = QPushButton("Import")
-        importBtn.setFixedWidth(80)
-        importBtn.clicked.connect(self.importClicked)
-        btnLayout.addWidget(importBtn)
-        cancelBtn = QPushButton("Cancel")
-        cancelBtn.setFixedWidth(80)
-        cancelBtn.clicked.connect(self.cancelClicked)
-        btnLayout.addWidget(cancelBtn)
-        VLayout.addLayout(btnLayout)
-        self.setLayout(VLayout)
-        self.t = threading.Thread(target=self.downloadFile)
-        self.t.start()
+    def setStatus(self, text):
+        self.statusLbl.setText(text)
+        self.statusLbl.repaint()
 
     def cancelClicked(self):
         self.close()
-
-    def downloadFile(self):
-        g = Github("", "")
-        repo = g.get_repo("sudo-panda/automata-library")  # TODO: Change repo
-        self.fileStr = repo.get_contents(self.name + "/" + self.name.replace(' ', '_') + ".xml").decoded_content
-
-    def importClicked(self):
-        self.t.join()
-        self.accept()
-
-class GetCatalogue(QThread):
-    xmlStr = pyqtSignal('QString')
-    def __init__(self):
-        super(QThread, self).__init__()
-
-    def run(self):
-        g = Github("", "")
-        repo = g.get_repo("sudo-panda/automata-library")  # TODO: Replace with actual repo
-        catalogue = repo.get_contents("Catalogue.xml")
-        self.xmlStr.emit(catalogue.decoded_content)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
