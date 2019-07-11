@@ -28,6 +28,7 @@ from requests.exceptions import ConnectionError, ReadTimeout
 class UploadFile(QThread):
     finished = pyqtSignal()
     error = pyqtSignal(str)
+    status = pyqtSignal(str)
 
     def __init__(self, username, password, name, description, xmlFile):
         super(QThread, self).__init__()
@@ -54,7 +55,7 @@ class UploadFile(QThread):
         upUser = g.get_user('sudo-panda')  # TODO:Change the repo to the actual one
         upRepo = upUser.get_repo("automata-library")  # TODO:Change the repo to the actual one
 
-        # self.setStatus("Forking library...")
+        self.status.emit("Forking library . . .")
         forkUser = g.get_user()
         forkRepo = forkUser.create_fork(upRepo)
         pulls = forkRepo.get_pulls(state='open', sort='created', base='master', head=upUser.login + ":master")
@@ -72,7 +73,7 @@ class UploadFile(QThread):
             except Exception as e:
                 pass
 
-        # self.setStatus("Checking for existing behaviours...")
+        self.status.emit("Checking for existing behaviours . . .")
         branches = list(forkRepo.get_branches())
         activeBranch = None
         exists = False
@@ -86,7 +87,7 @@ class UploadFile(QThread):
             activeBranch = forkRepo.get_branch(branch=branchName)
 
         if exists:
-            # self.setStatus("Updating existing behaviour...")
+            self.status.emit("Updating existing behaviour . . .")
             catalogue = forkRepo.get_contents("Catalogue.xml", ref=branchName)
             doc = minidom.parseString(catalogue.decoded_content)
             behaviour = forkRepo.get_contents(self.name + "/" + filename + ".xml", ref=branchName)
@@ -105,7 +106,7 @@ class UploadFile(QThread):
                 upRepo.create_pull("Add " + self.name + " behaviour", self.description,
                                                  '{}'.format('master'), '{}:{}'.format(forkUser.login, branchName), True)
         else:
-            # self.setStatus("Creating new behaviour...")
+            self.status.emit("Creating new behaviour . . .")
             catalogue = forkRepo.get_contents("Catalogue.xml", ref=branchName)
 
             # TODO: Remove the try except after first commit to library
@@ -121,7 +122,7 @@ class UploadFile(QThread):
             forkRepo.create_file(self.name + "/" + filename + ".xml", "Add behaviour file",
                                  self.xmlFile, branch=branchName)
 
-            # self.setStatus("Creating pull request")
+            self.status.emit("Creating pull request")
             upRepo.create_pull("Add " + self.name + " behaviour", self.description,
                                              '{}'.format('master'), '{}:{}'.format(forkUser.login, branchName), True)
         self.finished.emit()

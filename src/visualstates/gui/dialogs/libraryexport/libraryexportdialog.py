@@ -96,6 +96,7 @@ class LibraryExportDialog(QDialog):
             self.uploadFile = UploadFile(self.username, self.password, self.name, self.description, self.xmlFile)
             self.uploadFile.finished.connect(self.accept)
             self.uploadFile.error.connect(self.errorInUpload)
+            self.uploadFile.status.connect(self.setStatus)
             self.uploadFile.start()
         else:
             self.submitBtn.setEnabled(True)
