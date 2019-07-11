@@ -23,6 +23,7 @@ from PyQt5.QtWidgets import QDialog, QLabel,  \
     QScrollArea, QGroupBox, QBoxLayout, QCheckBox
 from PyQt5.QtCore import pyqtSignal, Qt
 from src.visualstates.gui.tools.elidedlabel import ElidedLabel
+from src.visualstates.gui.tools.clickablelabel import ClickableLabel
 from functools import partial
 
 class ImportedParamsDialog(QDialog):
@@ -88,6 +89,10 @@ class ImportedParamsDialog(QDialog):
             nameLbl.setStyleSheet(titleLblStyleSheet)
             rowLayout.addWidget(nameLbl)
             stateUIs.append(nameLbl)
+            if len(state.getNamespace().getParams()) > 0 or len(state.getChildren()) > 0:
+                viewLbl = ClickableLabel(u'\u25BE')
+                viewLbl.setMinimumWidth(20)
+                rowLayout.addWidget(viewLbl)
             layout.addLayout(rowLayout)
 
             if len(state.getNamespace().getParams()) > 0 or len(state.getChildren()) > 0:
@@ -101,6 +106,7 @@ class ImportedParamsDialog(QDialog):
                                        'border-top: 0px;}')
                 dummyBox.setLayout(stateLayout)
                 rowLayout.addWidget(dummyBox)
+                viewLbl.clicked.connect(partial(self.toggleView, dummyBox))
                 layout.addLayout(rowLayout)
         else:
             stateLayout = layout
@@ -118,6 +124,11 @@ class ImportedParamsDialog(QDialog):
                     self.addStates(stateLayout, child, None)
                 else:
                     self.addStates(stateLayout, child, stateUIs)
+            dummyBox = QGroupBox()
+            dummyBox.setStyleSheet('QGroupBox {background-color: white; border: 0px;}')
+            dummyBox.setMinimumWidth(100)
+            dummyBox.setFixedHeight(0)
+            stateLayout.addWidget(dummyBox)
 
     def setStateEnabled(self, stateUIs, state):
         for UI in stateUIs:
@@ -130,12 +141,25 @@ class ImportedParamsDialog(QDialog):
                         if not state:
                             UI.setChecked(state)
 
+    def toggleView(self, widget):
+        label = self.sender()
+        if widget.isHidden():
+            widget.setHidden(False)
+            label.setText(u'\u25BE')
+        else:
+            widget.setHidden(True)
+            label.setText(u'\u25B8')
+            label.setMinimumWidth(20)
+
     def displayStateParams(self, state, stateLayout, stateUIs, childTitleLblStyleSheet):
         rowLayout = QHBoxLayout()
         rowLayout.setAlignment(Qt.AlignLeft)
         paramTitleLbl = QLabel('Parameters')
         paramTitleLbl.setStyleSheet(childTitleLblStyleSheet)
         rowLayout.addWidget(paramTitleLbl)
+        viewLbl = ClickableLabel(u'\u25BE')
+        viewLbl.setMinimumWidth(20)
+        rowLayout.addWidget(viewLbl)
         stateLayout.addLayout(rowLayout)
         stateUIs.append(paramTitleLbl)
 
@@ -148,6 +172,7 @@ class ImportedParamsDialog(QDialog):
         dummyBox.setStyleSheet('QGroupBox {background-color: white; border: 0px; border-radius:3px;}')
         dummyBox.setLayout(paramLayout)
         rowLayout.addWidget(dummyBox)
+        viewLbl.clicked.connect(partial(self.toggleView, dummyBox))
         stateLayout.addLayout(rowLayout)
 
         titleLblStyleSheet = 'QLabel {font: italic;}'
