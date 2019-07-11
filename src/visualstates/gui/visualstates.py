@@ -258,19 +258,23 @@ class VisualStates(QMainWindow):
             tempPath = self.fileManager.getFullPath()
             file = self.fileManager.open(fileDialog.selectedFiles()[0])
             self.fileManager.setFullPath(tempPath)
+            self.importFile(file)
+
+    def importFile(self, file):
             # if the current active state already has an initial state make sure that
             # there will not be any initial state in the imported state
             if self.activeState.getInitialChild() is not None:
                 for childState in file[0].getChildren():
                     childState.setInitial(False)
 
-            # Update importing Namespaces
-            importedState, self.config, self.libraries, self.globalNamespace = self.importManager.updateAuxiliaryData(file, self)
-            self.treeModel.loadFromRoot(importedState, self.activeState)
-            self.automataScene.displayState(self.activeState)
-            self.automataScene.setLastIndexes(self.rootState)
-            displayParamDialog = ImportedParamsDialog("Imported Parameters", importedState)
-            displayParamDialog.exec_()
+            displayParamDialog = ImportedParamsDialog("Imported Parameters", file)
+            if displayParamDialog.exec_():
+                file = displayParamDialog.file
+                # Update importing Namespaces
+                importedState, self.config, self.libraries, self.globalNamespace = self.importManager.updateAuxiliaryData(file, self)
+                self.treeModel.loadFromRoot(importedState, self.activeState)
+                self.automataScene.displayState(self.activeState)
+                self.automataScene.setLastIndexes(self.rootState)
 
     def timerAction(self):
         if self.activeState is not None:

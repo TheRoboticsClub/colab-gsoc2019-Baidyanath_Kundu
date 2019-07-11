@@ -20,20 +20,19 @@
 import sys
 from PyQt5.QtWidgets import QDialog, QLabel,  \
     QPushButton, QApplication, QHBoxLayout, QVBoxLayout, \
-    QScrollArea, QGroupBox, QBoxLayout
+    QScrollArea, QGroupBox, QBoxLayout, QCheckBox
 from PyQt5.QtCore import pyqtSignal, Qt
-from visualstates.gui.tools.elidedlabel import ElidedLabel
-
+from src.visualstates.gui.tools.elidedlabel import ElidedLabel
+from functools import partial
 
 class ImportedParamsDialog(QDialog):
     paramsChanged = pyqtSignal(list)
 
-    def __init__(self, name, rootState):
+    def __init__(self, name, file):
         super(QDialog, self).__init__()
         self.setWindowTitle(name)
-        self.rootState = rootState
-        self.paramUIs = []
-        self.removeIds = []
+        self.file = file
+        self.checkBoxList = []
         self.setMinimumSize(800, 500)
 
         self.drawWindow()
@@ -61,102 +60,172 @@ class ImportedParamsDialog(QDialog):
         doneBtn.clicked.connect(self.doneClicked)
         btnLayout.addWidget(doneBtn)
         VLayout.addLayout(btnLayout)
-        self.addStates(self.scrollVlayout, self.rootState, root=True)
+        self.addStates(self.scrollVlayout, self.file[0], None, root=True)
         self.setLayout(VLayout)
 
-    def addStates(self, layout, state, root=False):
-        titleLblStyleSheet = 'QLabel {font-weight:bold;}'
+    def addStates(self, layout, state, parentStateUIs, root=False):
+        titleLblStyleSheet = 'QLabel:enabled{font-weight:bold; color:black;} ' \
+                             'QLabel:disabled{font-weight:bold; color:grey;}'
         childTitleLblStyleSheet = 'QLabel {font:italic; font-weight:bold;}'
         bulletLblStyleSheet = 'QLabel {font-size: 25px; font-weight:bold;}'
+        stateUIs = []
         if not root:
             rowLayout = QHBoxLayout()
-            rowLayout.addSpacing(10)
-            bulletLbl = QLabel(u"\u2022")
-            bulletLbl.setFixedWidth(10)
-            bulletLbl.setStyleSheet(bulletLblStyleSheet)
-            rowLayout.addWidget(bulletLbl)
+            rowLayout.setAlignment(Qt.AlignLeft)
+            rowLayout.addSpacing(5)
+            checkBox = QCheckBox()
+            checkBox.setFixedWidth(20)
+            checkBox.setStyleSheet(bulletLblStyleSheet)
+            checkBox.setChecked(True)
+            checkBox.stateChanged.connect(partial(self.setStateEnabled, stateUIs))
+            if len(self.checkBoxList) < state.id:
+                self.checkBoxList.extend([None] * (state.id - len(self.checkBoxList)))
+            self.checkBoxList[state.id - 1] = checkBox
+            if parentStateUIs is not None:
+                parentStateUIs.append(checkBox)
+            rowLayout.addWidget(checkBox)
             nameLbl = QLabel(state.getName())
-            nameLbl.setMinimumWidth(100)
             nameLbl.setStyleSheet(titleLblStyleSheet)
             rowLayout.addWidget(nameLbl)
+            stateUIs.append(nameLbl)
             layout.addLayout(rowLayout)
 
-            #if len(state.getNamespace().getParams()) > 0 or len(state.getChildren()) > 0:
-            rowLayout = QHBoxLayout()
-            rowLayout.addSpacing(14)
-            newLayout = QVBoxLayout()
-            newLayout.setDirection(QBoxLayout.TopToBottom)
-            newLayout.setAlignment(Qt.AlignTop)
-            dummyBox = QGroupBox()
-            dummyBox.setStyleSheet('QGroupBox {padding: 0px; margin: 0px; border-left: 1px solid gray; '
-                                   'border-top: 0px;}')
-            dummyBox.setLayout(newLayout)
-            rowLayout.addWidget(dummyBox)
-            layout.addLayout(rowLayout)
+            if len(state.getNamespace().getParams()) > 0 or len(state.getChildren()) > 0:
+                rowLayout = QHBoxLayout()
+                rowLayout.addSpacing(14)
+                stateLayout = QVBoxLayout()
+                stateLayout.setDirection(QBoxLayout.TopToBottom)
+                stateLayout.setAlignment(Qt.AlignTop)
+                dummyBox = QGroupBox()
+                dummyBox.setStyleSheet('QGroupBox {padding: 0px; margin: 0px; border-left: 1px solid gray; '
+                                       'border-top: 0px;}')
+                dummyBox.setLayout(stateLayout)
+                rowLayout.addWidget(dummyBox)
+                layout.addLayout(rowLayout)
         else:
-            newLayout = layout
+            stateLayout = layout
 
         if len(state.getNamespace().getParams()) > 0:
-            paramTitleLbl = QLabel('Parameters:')
-            paramTitleLbl.setStyleSheet(childTitleLblStyleSheet)
-            newLayout.addWidget(paramTitleLbl)
-            for param in state.getNamespace().getParams():
-                self.addParam(newLayout, param)
+            self.displayStateParams(state, stateLayout, stateUIs, childTitleLblStyleSheet)
 
         if len(state.getChildren()) > 0:
             childStatesTitleLbl = QLabel('Child States:')
             childStatesTitleLbl.setStyleSheet(childTitleLblStyleSheet)
-            newLayout.addWidget(childStatesTitleLbl)
+            stateLayout.addWidget(childStatesTitleLbl)
+            stateUIs.append(childStatesTitleLbl)
             for child in state.getChildren():
-                self.addStates(newLayout, child)
+                if root:
+                    self.addStates(stateLayout, child, None)
+                else:
+                    self.addStates(stateLayout, child, stateUIs)
 
-        return layout
+    def setStateEnabled(self, stateUIs, state):
+        for UI in stateUIs:
+            if UI is not None:
+                if type(UI) == list:
+                    self.setStateEnabled(UI, state)
+                else:
+                    UI.setEnabled(state)
+                    if isinstance(UI, QCheckBox):
+                        if not state:
+                            UI.setChecked(state)
 
-    def addParam(self, layout, param):
-        titleLblStyleSheet = 'QLabel {font: italic;}'
+    def displayStateParams(self, state, stateLayout, stateUIs, childTitleLblStyleSheet):
+        rowLayout = QHBoxLayout()
+        rowLayout.setAlignment(Qt.AlignLeft)
+        paramTitleLbl = QLabel('Parameters')
+        paramTitleLbl.setStyleSheet(childTitleLblStyleSheet)
+        rowLayout.addWidget(paramTitleLbl)
+        stateLayout.addLayout(rowLayout)
+        stateUIs.append(paramTitleLbl)
+
         rowLayout = QHBoxLayout()
         rowLayout.addSpacing(10)
-        titleLbl = QLabel('Name:')
+        paramLayout = QVBoxLayout()
+        paramLayout.setDirection(QBoxLayout.TopToBottom)
+        paramLayout.setAlignment(Qt.AlignTop)
+        dummyBox = QGroupBox()
+        dummyBox.setStyleSheet('QGroupBox {background-color: white; border: 0px; border-radius:3px;}')
+        dummyBox.setLayout(paramLayout)
+        rowLayout.addWidget(dummyBox)
+        stateLayout.addLayout(rowLayout)
+
+        titleLblStyleSheet = 'QLabel {font: italic;}'
+        rowLayout = QHBoxLayout()
+        titleLbl = QLabel('Name')
         titleLbl.setStyleSheet(titleLblStyleSheet)
-        titleLbl.setFixedWidth(43)
+        titleLbl.setFixedWidth(150)
         rowLayout.addWidget(titleLbl)
+        stateUIs.append(titleLbl)
+        rowLayout.addSpacing(5)
+        titleLbl = QLabel('Type')
+        titleLbl.setStyleSheet(titleLblStyleSheet)
+        titleLbl.setFixedWidth(60)
+        rowLayout.addWidget(titleLbl)
+        stateUIs.append(titleLbl)
+        rowLayout.addSpacing(5)
+        titleLbl = QLabel('Value')
+        titleLbl.setStyleSheet(titleLblStyleSheet)
+        titleLbl.setFixedWidth(100)
+        rowLayout.addWidget(titleLbl)
+        stateUIs.append(titleLbl)
+        rowLayout.addSpacing(5)
+        titleLbl = QLabel('Description')
+        titleLbl.setStyleSheet(titleLblStyleSheet)
+        titleLbl.setMinimumWidth(300)
+        rowLayout.addWidget(titleLbl)
+        stateUIs.append(titleLbl)
+
+        paramLayout.addLayout(rowLayout)
+
+        for param in state.getNamespace().getParams():
+            paramUIs = self.addParam(paramLayout, param)
+            stateUIs.append(paramUIs)
+
+    def addParam(self, layout, param):
+        paramUIs = []
+        rowLayout = QHBoxLayout()
         nameLbl = ElidedLabel(param.name)
         nameLbl.setToolTip(param.name)
         nameLbl.setFixedWidth(150)
         rowLayout.addWidget(nameLbl)
+        paramUIs.append(nameLbl)
         rowLayout.addSpacing(5)
-        titleLbl = QLabel('Type:')
-        titleLbl.setStyleSheet(titleLblStyleSheet)
-        titleLbl.setFixedWidth(36)
-        rowLayout.addWidget(titleLbl)
         typeLbl = ElidedLabel(param.type)
         typeLbl.setFixedWidth(60)
         rowLayout.addWidget(typeLbl)
+        paramUIs.append(typeLbl)
         rowLayout.addSpacing(5)
-        titleLbl = QLabel('Value:')
-        titleLbl.setStyleSheet(titleLblStyleSheet)
-        titleLbl.setFixedWidth(47)
-        rowLayout.addWidget(titleLbl)
         valueLbl = ElidedLabel(param.value)
         valueLbl.setToolTip(param.value)
         valueLbl.setFixedWidth(100)
         rowLayout.addWidget(valueLbl)
+        paramUIs.append(valueLbl)
         rowLayout.addSpacing(5)
-        titleLbl = QLabel('Description:')
-        titleLbl.setStyleSheet(titleLblStyleSheet)
-        titleLbl.setFixedWidth(80)
-        rowLayout.addWidget(titleLbl)
         descLbl = ElidedLabel(param.desc)
         descLbl.setAlignment(Qt.AlignTop)
         descLbl.setFixedHeight(17)
         descLbl.setToolTip(param.desc)
-        descLbl.setMinimumWidth(400)
+        descLbl.setMinimumWidth(300)
         rowLayout.addWidget(descLbl)
-
+        paramUIs.append(descLbl)
         layout.addLayout(rowLayout)
+        return paramUIs
 
+    def removeStates(self, parentState):
+        remList = []
+        for child in parentState.getChildren():
+            if not self.checkBoxList[child.id - 1].isChecked():
+                remList.append(child)
+            else:
+                self.removeStates(child)
+        for child in remList:
+            for transition in child.getDestTransitions():
+                transition.origin.removeOriginTransition(transition)
+            parentState.removeChild(child)
 
     def doneClicked(self):
+        self.removeStates(self.file[0])
         self.accept()
 
 if __name__ == '__main__':
