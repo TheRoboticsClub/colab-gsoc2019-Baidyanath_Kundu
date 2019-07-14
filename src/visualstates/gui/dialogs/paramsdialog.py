@@ -22,8 +22,8 @@ from PyQt5.QtWidgets import QDialog, QLabel,  \
     QPushButton, QApplication, QHBoxLayout, QVBoxLayout, \
     QScrollArea, QGroupBox, QBoxLayout, QCheckBox
 from PyQt5.QtCore import pyqtSignal, Qt
-from src.visualstates.gui.tools.elidedlabel import ElidedLabel
-from src.visualstates.gui.tools.clickablelabel import ClickableLabel
+from ..tools.elidedlabel import ElidedLabel
+from ..tools.clickablelabel import ClickableLabel
 from functools import partial
 
 class ImportedParamsDialog(QDialog):
