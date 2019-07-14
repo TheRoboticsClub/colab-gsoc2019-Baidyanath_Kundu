@@ -55,6 +55,29 @@ that has to be manually created.
 <a name="documentation"/>
 
 ## Documentation
+#### Week 7: 8 July 2019 - 14 July 2019
+##### Discussion
+- Design of the parameterization of the VisualStates
+    - Tree of states with parameters are going to be shown during import 
+    - The states can be selected in the dialog mentioned above 
+    - The information of states would be collapsible for easy viewing
+- Design of online importer and exporter
+    - The download and upload of files are going to be done via QThreads for multithreading the operations
+    - One Class in one file structure is to be followed
+    - The exporter doesn't need to show messages in this stage of development
+
+##### Task
+- Complete the requested changes as mentioned above
+
+##### Progress
+- Design of the parameterization of the VisualStates. 
+    [Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/1)
+    - Completed all the required changes
+- Design of online importer and exporter. 
+    [Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/5)
+    - Completed all the required changes
+    - Also found and added a way to show progress messages in the exporter dialog
+    
 #### Week 6: 1 July 2019 - 7 July 2019
 ##### Task
 - Add a dialog to display imported parameters
