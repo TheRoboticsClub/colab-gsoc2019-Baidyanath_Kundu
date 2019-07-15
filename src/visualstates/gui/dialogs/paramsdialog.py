@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import QDialog, QLabel,  \
     QPushButton, QApplication, QHBoxLayout, QVBoxLayout, \
     QScrollArea, QGroupBox, QBoxLayout, QCheckBox
 from PyQt5.QtCore import pyqtSignal, Qt
+from visualstates.gui.dialogs.paramprop import ParamPropDialog
 from ..tools.elidedlabel import ElidedLabel
 from ..tools.clickablelabel import ClickableLabel
 from functools import partial
@@ -177,6 +178,10 @@ class ImportedParamsDialog(QDialog):
 
         titleLblStyleSheet = 'QLabel {font: italic;}'
         rowLayout = QHBoxLayout()
+        titleLbl = QLabel('')
+        titleLbl.setStyleSheet(titleLblStyleSheet)
+        titleLbl.setFixedWidth(20)
+        rowLayout.addWidget(titleLbl)
         titleLbl = QLabel('Name')
         titleLbl.setStyleSheet(titleLblStyleSheet)
         titleLbl.setFixedWidth(150)
@@ -210,6 +215,11 @@ class ImportedParamsDialog(QDialog):
     def addParam(self, layout, param):
         paramUIs = []
         rowLayout = QHBoxLayout()
+        showLbl = ClickableLabel(u'\U0001F441')
+        showLbl.setToolTip("View")
+        showLbl.clicked.connect(partial(self.showParam, param))
+        showLbl.setFixedWidth(20)
+        rowLayout.addWidget(showLbl)
         nameLbl = ElidedLabel(param.name)
         nameLbl.setToolTip(param.name)
         nameLbl.setFixedWidth(150)
@@ -236,6 +246,10 @@ class ImportedParamsDialog(QDialog):
         paramUIs.append(descLbl)
         layout.addLayout(rowLayout)
         return paramUIs
+
+    def showParam(self, param):
+        paramPropDialog = ParamPropDialog(param=param, modify=False)
+        paramPropDialog.exec_()
 
     def removeStates(self, parentState):
         remList = []

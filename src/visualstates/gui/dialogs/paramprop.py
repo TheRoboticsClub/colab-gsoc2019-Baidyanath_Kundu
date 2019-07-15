@@ -31,18 +31,20 @@ class ParamPropDialog(QDialog):
     paramAdded = pyqtSignal(list)
     paramUpdated = pyqtSignal(list, int)
 
-    def __init__(self, params=None, id=-1):
+    def __init__(self, param=None, params=None, id=-1, modify=True):
         super(QDialog, self).__init__()
         self.params = params
         self.id = id
         self.param = Parameter()
-        if self.id != -1:
-            self.param = self.params[self.id]
         self.setFixedSize(400, 360)
-        if id == -1:
+        if not modify:
+            self.setWindowTitle('View Parameter')
+            self.param = param
+        elif id == -1:
             self.setWindowTitle('Add Parameter')
         else:
             self.setWindowTitle('Edit Parameter')
+            self.param = self.params[self.id]
 
         Layout = QVBoxLayout()
         self.setLayout(Layout)
@@ -58,10 +60,14 @@ class ParamPropDialog(QDialog):
         typeLbl = QLabel('Type :')
         typeLbl.setFixedWidth(100)
         rowLayout.addWidget(typeLbl)
-        self.typeCb = QComboBox()
-        self.typeCb.addItems(['String', 'Character', 'Integer', 'Float', 'Boolean'])
-        self.typeCb.setCurrentText(self.param.type)
-        rowLayout.addWidget(self.typeCb)
+        if modify:
+            self.typeCb = QComboBox()
+            self.typeCb.addItems(['String', 'Character', 'Integer', 'Float', 'Boolean'])
+            self.typeCb.setCurrentText(self.param.type)
+            rowLayout.addWidget(self.typeCb)
+        else:
+            self.typeEdit = QLineEdit(self.param.type)
+            rowLayout.addWidget(self.typeEdit)
         Layout.addLayout(rowLayout)
 
         rowLayout = QHBoxLayout()
@@ -84,16 +90,23 @@ class ParamPropDialog(QDialog):
 
         btnLayout = QHBoxLayout()
         btnLayout.setAlignment(Qt.AlignRight)
-        saveBtn = QPushButton("Save")
-        saveBtn.setFixedWidth(80)
-        saveBtn.clicked.connect(self.saveClicked)
-        btnLayout.addWidget(saveBtn)
+        if modify:
+            saveBtn = QPushButton("Save")
+            saveBtn.setFixedWidth(80)
+            saveBtn.clicked.connect(self.saveClicked)
+            btnLayout.addWidget(saveBtn)
         closeBtn = QPushButton("Close")
         closeBtn.setFixedWidth(80)
         closeBtn.clicked.connect(self.closeClicked)
         btnLayout.addWidget(closeBtn)
         Layout.addLayout(btnLayout)
         self.setLayout(Layout)
+
+        if not modify:
+            self.nameEdit.setReadOnly(True)
+            self.typeEdit.setReadOnly(True)
+            self.valueEdit.setReadOnly(True)
+            self.descEdit.setReadOnly(True)
 
     def saveClicked(self):
         if not isTypeEqualValue(self.typeCb.currentText(), self.valueEdit.text().strip()):
@@ -119,10 +132,10 @@ class ParamPropDialog(QDialog):
                 self.paramAdded.emit(self.params)
             else:
                 self.paramUpdated.emit(self.params, self.id)
-            self.close()
+            self.accept()
 
     def closeClicked(self):
-        self.close()
+        self.accept()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
