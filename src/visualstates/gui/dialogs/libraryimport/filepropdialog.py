@@ -20,7 +20,7 @@
 
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPlainTextEdit, QPushButton
 from PyQt5.QtCore import Qt
-from src.visualstates.githubtools.downloadfile import DownloadFile
+from ....githubtools.downloadfile import DownloadFile
 
 class FilePropertiesDialog(QDialog):
     def __init__(self, name, description):

@@ -25,7 +25,7 @@ from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, \
     QPushButton, QApplication, QHBoxLayout, QVBoxLayout, \
     QMessageBox, QPlainTextEdit
 from PyQt5.QtCore import *
-from src.visualstates.githubtools.uploadfile import UploadFile
+from ....githubtools.uploadfile import UploadFile
 
 class LibraryExportDialog(QDialog):
     def __init__(self, username, password, xmlFile):

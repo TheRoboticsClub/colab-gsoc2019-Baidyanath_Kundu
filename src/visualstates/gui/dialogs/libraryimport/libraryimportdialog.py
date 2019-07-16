@@ -24,9 +24,9 @@ from PyQt5.QtWidgets import QDialog, QLabel, QPushButton,\
     QApplication, QHBoxLayout, QVBoxLayout, QScrollArea, \
     QGroupBox, QBoxLayout
 from PyQt5.QtCore import Qt, pyqtSignal
-from src.visualstates.gui.tools.elidedlabel import ElidedLabel
-from src.visualstates.githubtools.downloadfile import DownloadFile
-from src.visualstates.gui.dialogs.libraryimport.filepropdialog import FilePropertiesDialog
+from .filepropdialog import FilePropertiesDialog
+from ...tools.elidedlabel import ElidedLabel
+from ....githubtools.downloadfile import DownloadFile
 
 class FileImportDialog(QDialog):
     fileStr = pyqtSignal('QString')

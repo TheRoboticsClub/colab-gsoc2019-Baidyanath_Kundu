@@ -27,8 +27,8 @@ from .transition.timerdialog import TimerDialog
 from .dialogs.namespacedialog import NamespaceDialog
 from .dialogs.librariesdialog import LibrariesDialog
 from .dialogs.rosconfigdialog import RosConfigDialog
-from src.visualstates.gui.dialogs.libraryexport.libraryexportdialog import LibraryExportDialog
-from src.visualstates.gui.dialogs.libraryexport.githubcreddialog import GithubCredentialsDialog
+from .dialogs.libraryexport.libraryexportdialog import LibraryExportDialog
+from .dialogs.libraryexport.githubcreddialog import GithubCredentialsDialog
 from .dialogs.libraryimport.libraryimportdialog import FileImportDialog
 from ..configs.rosconfig import RosConfig
 from ..generators.cpprosgenerator import CppRosGenerator
