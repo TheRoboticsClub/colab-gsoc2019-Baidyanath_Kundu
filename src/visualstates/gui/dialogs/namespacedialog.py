@@ -312,7 +312,7 @@ class ParamsTab(QDialog):
         UI[3].setToolTip(param.desc)
 
     def emitParams(self):
-        params = self.params
+        params = list(self.params)
         count = 0
         for id in self.removeIds:
             id = id - count
