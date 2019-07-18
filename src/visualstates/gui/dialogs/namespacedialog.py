@@ -226,8 +226,9 @@ class ParamsTab(QDialog):
         self.scrollVlayout = QVBoxLayout()
         self.scrollVlayout.setDirection(QBoxLayout.TopToBottom)
         self.scrollVlayout.setAlignment(Qt.AlignTop)
+
         dummyBox = QGroupBox()
-        dummyBox.setStyleSheet('QGroupBox {padding: 0px; margin: 0px;}')
+        dummyBox.setStyleSheet('QGroupBox {padding-top: 20px; margin-top: -20px;}')
         dummyBox.setLayout(self.scrollVlayout)
         scrollArea.setWidget(dummyBox)
         VLayout.addWidget(scrollArea)
