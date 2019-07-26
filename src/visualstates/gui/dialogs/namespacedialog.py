@@ -27,6 +27,7 @@ from PyQt5.QtGui import QFontDatabase, QColor, QFontMetrics
 from PyQt5.Qsci import QsciScintilla, QsciLexerPython, QsciLexerCPP
 from visualstates.gui.dialogs.paramprop import ParamPropDialog
 from visualstates.gui.tools.elidedlabel import ElidedLabel
+from collections import OrderedDict
 
 class NamespaceDialog(QDialog):
     namespaceChanged = pyqtSignal()
@@ -179,8 +180,10 @@ class ParamsTab(QDialog):
 
     def __init__(self, params):
         super(QDialog, self).__init__()
-        self.params = params
-        self.paramUIs = []
+        self.params = OrderedDict()
+        for param in params:
+            self.params[param.name] = param
+        self.paramUIs = {}
         self.removeIds = []
         self.drawWindow()
 
@@ -233,17 +236,11 @@ class ParamsTab(QDialog):
         scrollArea.setWidget(dummyBox)
         VLayout.addWidget(scrollArea)
 
-        for i in range(len(self.params)):
-            self.addParam(i)
+        for param in self.params.values():
+            self.addParam(param)
         self.setLayout(VLayout)
 
-    def newClicked(self):
-        dialog = ParamPropDialog(params=self.params)
-        dialog.paramAdded.connect(self.paramAddedHandler)
-        dialog.exec_()
-
-    def addParam(self, id):
-        param = self.params[id]
+    def addParam(self, param):
         rowLayout = QHBoxLayout()
         nameLbl = ElidedLabel(param.name)
         nameLbl.setToolTip(param.name)
@@ -265,34 +262,39 @@ class ParamsTab(QDialog):
 
         editBtn = QPushButton('Edit')
         editBtn.setFixedWidth(80)
-        editBtn.setObjectName(str(id))
+        editBtn.setObjectName(param.name)
         editBtn.clicked.connect(self.editHandler)
         rowLayout.addWidget(editBtn)
         removeBtn = QPushButton('Remove')
         removeBtn.setFixedWidth(80)
-        removeBtn.setObjectName(str(id))
+        removeBtn.setObjectName(param.name)
         removeBtn.clicked.connect(self.removeHandler)
         rowLayout.addWidget(removeBtn)
 
         self.scrollVlayout.addLayout(rowLayout)
         UI = [nameLbl, typeLbl, valueLbl, descLbl, editBtn, removeBtn]
-        self.paramUIs.append(UI)
+        self.paramUIs[param.name] = UI
 
-    def paramAddedHandler(self, params):
+    def newClicked(self):
+        dialog = ParamPropDialog(params=self.params)
+        dialog.paramAdded.connect(self.paramAddedHandler)
+        dialog.exec_()
+
+    def paramAddedHandler(self, params, name):
         self.params = params
         self.emitParams()
-        self.addParam(len(self.params)-1)
+        self.addParam(self.params[name])
 
     def removeHandler(self):
-        removeId = int(self.sender().objectName())
-        self.removeIds.append(removeId)
+        removeId = self.sender().objectName()
+        self.params.pop(removeId, None)
         self.emitParams()
         for uiItem in self.paramUIs[removeId]:
             uiItem.deleteLater()
 
 
     def editHandler(self):
-        editID = int(self.sender().objectName())
+        editID = self.sender().objectName()
         dialog = ParamPropDialog(params=self.params, id=editID)
         dialog.paramUpdated.connect(self.paramUpdatedHandler)
         dialog.exec_()
@@ -310,12 +312,13 @@ class ParamsTab(QDialog):
         UI[2].setToolTip(param.value)
         UI[3].setText(param.desc)
         UI[3].setToolTip(param.desc)
+        self.params.pop(id, None)
+        self.params[param.name] = param
+        self.paramUIs.pop(id, None)
+        self.paramUIs[param.name] = UI
 
     def emitParams(self):
-        params = list(self.params)
-        count = 0
-        for id in self.removeIds:
-            id = id - count
-            params.pop(id)
-            count += 1
-        self.paramsChanged.emit(self.params)
+        params = []
+        for param in self.params.values():
+            params.append(param)
+        self.paramsChanged.emit(params)

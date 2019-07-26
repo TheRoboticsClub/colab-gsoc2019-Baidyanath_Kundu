@@ -28,10 +28,10 @@ from visualstates.core.parameter import Parameter, isParamName, isTypeEqualValue
 
 class ParamPropDialog(QDialog):
 
-    paramAdded = pyqtSignal(list)
-    paramUpdated = pyqtSignal(list, int)
+    paramAdded = pyqtSignal(dict, str)
+    paramUpdated = pyqtSignal(dict, str)
 
-    def __init__(self, param=None, params=None, id=-1, modify=True):
+    def __init__(self, param=None, params=None, id="", modify=True):
         super(QDialog, self).__init__()
         self.params = params
         self.id = id
@@ -40,7 +40,7 @@ class ParamPropDialog(QDialog):
         if not modify:
             self.setWindowTitle('View Parameter')
             self.param = param
-        elif id == -1:
+        elif id == "":
             self.setWindowTitle('Add Parameter')
         else:
             self.setWindowTitle('Edit Parameter')
@@ -114,22 +114,21 @@ class ParamPropDialog(QDialog):
         elif not isParamName(self.nameEdit.text().strip()):
             QMessageBox.warning(self, 'Error', 'Name does not meet requirements of a parameter')
         else:
-            for param in self.params:
-                if self.id != -1 and param == self.params[self.id]:
-                    continue
-                if param.name == self.nameEdit.text():
-                    QMessageBox.warning(self, 'Error', 'Name already in use')
-                    return
+            if self.nameEdit.text() != self.id and self.id != "":
+                for param in self.params.values():
+                    if param.name == self.nameEdit.text():
+                        QMessageBox.warning(self, 'Error', 'Name already in use')
+                        return
             newParam = False
-            if self.id == -1:
+            if self.id == "":
                 newParam = True
             self.param.setName(self.nameEdit.text().strip())
             self.param.setType(self.typeCb.currentText())
             self.param.setValue(self.valueEdit.text().strip())
             self.param.setDesc(self.descEdit.toPlainText())
             if newParam:
-                self.params.append(self.param)
-                self.paramAdded.emit(self.params)
+                self.params[self.param.name] = self.param
+                self.paramAdded.emit(self.params, self.param.name)
             else:
                 self.paramUpdated.emit(self.params, self.id)
             self.accept()
