@@ -27,7 +27,7 @@ from .transition.timerdialog import TimerDialog
 from .dialogs.namespacedialog import NamespaceDialog
 from .dialogs.librariesdialog import LibrariesDialog
 from .dialogs.rosconfigdialog import RosConfigDialog
-from .dialogs.paramsdialog import ImportedParamsDialog
+from .dialogs.importdialog import ImportDialog
 from ..configs.rosconfig import RosConfig
 from ..generators.cpprosgenerator import CppRosGenerator
 from ..generators.pythonrosgenerator import PythonRosGenerator
@@ -267,7 +267,7 @@ class VisualStates(QMainWindow):
                 for childState in file[0].getChildren():
                     childState.setInitial(False)
 
-            displayParamDialog = ImportedParamsDialog("Imported Parameters", file)
+            displayParamDialog = ImportDialog("Imported States and Parameters", file)
             if displayParamDialog.exec_():
                 file = displayParamDialog.file
                 # Update importing Namespaces

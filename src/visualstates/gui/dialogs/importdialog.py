@@ -27,7 +27,7 @@ from ..tools.elidedlabel import ElidedLabel
 from ..tools.clickablelabel import ClickableLabel
 from functools import partial
 
-class ImportedParamsDialog(QDialog):
+class ImportDialog(QDialog):
     paramsChanged = pyqtSignal(list)
 
     def __init__(self, name, file):
@@ -139,8 +139,7 @@ class ImportedParamsDialog(QDialog):
                 else:
                     UI.setEnabled(state)
                     if isinstance(UI, QCheckBox):
-                        if not state:
-                            UI.setChecked(state)
+                        UI.setChecked(state)
 
     def toggleView(self, widget):
         label = self.sender()
