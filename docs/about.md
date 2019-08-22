@@ -18,9 +18,9 @@ that has to be manually created.
 |1.   |Add the feature to Visual States Tool        | Done   |                             |
 |2.   |Create example with parameters               | Done   |                             |
 |     |**Phase 2: Creating a library of automatas** |        |June 17, 2019 - July 21, 2019|
-|1.   |Create the repository for online library     | Done   |                             |
+|1.   |Create the repository for online library     |        |                             |
 |2.   |Add feature to export to online library      | Done   |                             |
-|3.   |Add feature to import from online library    |        |                             |
+|3.   |Add feature to import from online library    | Done   |                             |
 |4.   |Create examples for the library              |        |                             |
 
 ## People Involved

@@ -9,6 +9,8 @@
 |4. [Development Status](#status)         |
 |5. [Documentation](#documentation)|
 
+
+
 <a name="visualstates"/>
 
 ## VisualStates Tool
@@ -47,14 +49,98 @@ that has to be manually created.
 |1.   |Add the feature to Visual States Tool        | Done   |                             |
 |2.   |Create example with parameters               | Done   |                             |
 |     |**Phase 2: Creating a library of automatas** |        |June 17, 2019 - July 21, 2019|
-|1.   |Create the repository for online library     | Done   |                             |
+|1.   |Create the repository for online library     |        |                             |
 |2.   |Add feature to export to online library      | Done   |                             |
-|3.   |Add feature to import from online library    |        |                             |
+|3.   |Add feature to import from online library    | Done   |                             |
 |4.   |Create examples for the library              |        |                             |
 
 <a name="documentation"/>
 
 ## Documentation
+### Week 12: 12 August 2019 - 18 August 2019
+#### Discussion
+- The build of ardrone_vislab failed.
+- Switched to making a urdf for ardrone.
+- The plugin present in JDERobot base uses ICE drivers so a new plugin is needed.
+
+#### Task
+- Create a urdf for the ardrone.
+- Create a plugin to replace the present ardrone plugin which doesn't use ICE.
+
+#### Progress
+- Created the urdf. It currently uses the plugin which interfaces through ICE.
+
+#### Problems faced
+- Never having built a gazebo plugin, building that one from scratch was a bad idea.
+- To solve this issue currently I am trying to fuse two plugins
+    - JDERobot base plugin for the ardrone.
+    - Hector gazebo plugin for quadrotor.
+
+
+### Week 11: 5 August 2019 - 11 August 2019
+#### Discussion
+- A new model named ArDrone2 will be used to develop more behaviours
+    - The model can be found in [this repo.](https://github.com/vislab-tecnico-lisboa/ardrone_gazebo/tree/master/ardrone_vislab)
+- Any of the prius behaviour was to be either improved or a new one was to be created.
+
+#### Task
+- Create behaviours using ArDrone2 and improve or add behaviours that use prius model.
+
+#### Progress
+- Improved the prius_overtake behaviour by using orientation and position based
+ transitions instead of temporal transitions.
+ [Pull Request](https://github.com/JdeRobot/VisualStates-examples/pull/21)
+
+#### Problems faced
+- The repo supplied was very old so many errors had crept in. After solving
+ almost all errors (such as it needed gazebo 7 to build and they were accessing
+ std func directly with the using namespace command), I had to leave it as
+ it had a dependency on an older version of a library which wasn't available. 
+ So I have to create a urdf with the prebuilt plugins added to a included 
+ folder.
+
+### Week 10: 29 July 2019 - 4 August 2019
+#### Discussion
+- The video made for the demonstration required several additions and modifications:
+    - It should show the addition of states, adding parameters, adding codes that use the parameters.
+    - The video should highlight how defined parameters are referenced and used in the code.
+    - It would be better if you do not reference your previous video. 
+    - The video should fit in 2 mins.
+- The [Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/1) of parameterization was to be reviewed before it was merged
+
+#### Task
+- Remake the [previous video](https://drive.google.com/open?id=1nuJuUHtd9Fs08b9c9AcmKaN3_HClEmUg) to add all required contents
+
+#### Progress
+- Made the final draft of the video but wasn't able to shorten the length to 2 mins. [Link](https://drive.google.com/open?id=1xj2Oq4W6vHsDv1bXrO5PtYICrf3LEZEe)
+
+
+### Week 9: 22 July 2019 - 28 July 2019
+#### Task
+- Fix bugs that arise while testing
+
+#### Progress
+- Design of the parameterization of the VisualStates. 
+    [Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/1)
+    - Changed the data structure used to store the parameters in State Namespace to use dictionary. [Commit](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/1/commits/3eef8dc7b949e0cdc6a446961857b8518499cc52)
+- Made first draft of the parameterization video. [Link](https://drive.google.com/open?id=1nuJuUHtd9Fs08b9c9AcmKaN3_HClEmUg)
+
+### Week 8: 15 July 2019 - 21 July 2019
+#### Discussion
+- New behaviours need to be created using a different robot environment than kobuki or prius examples
+- A video has to be created demonstrating the use of parameters in import of the project
+
+#### Task
+- Fix bugs that arise while testing
+
+#### Progress
+- Design of the parameterization of the VisualStates. 
+    [Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/1)
+    - Squashed all the bugs found
+- Design of online importer and exporter. 
+    [Pull Request](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/5)
+    - Squashed all the bugs found
+
 #### Week 7: 8 July 2019 - 14 July 2019
 ##### Discussion
 - Design of the parameterization of the VisualStates
