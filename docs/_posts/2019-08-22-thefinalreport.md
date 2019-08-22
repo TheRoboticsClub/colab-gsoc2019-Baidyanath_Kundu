@@ -6,10 +6,11 @@
 |2. [The Task](#task)                     |
 |3. [Work Completed](#completed)          |
 |4. [Work Left](#left)                    |
-|5. [People Involved](#people-involved)   |
-|6. [Links](#links)                       |
-|7. [Development Status](#status)         |
-|8. [Documentation](#documentation)       |
+|5. [Explanation Videos](#videos)         |
+|6. [People Involved](#people-involved)   |
+|7. [Links](#links)                       |
+|8. [Development Status](#status)         |
+|9. [Documentation](#documentation)       |
 
 
 
@@ -62,6 +63,11 @@ hasn't been created. It has to go through these before it can be merged.
 - ArDrone2 model is being changed so that it uses ROS publishers and subscribers instead of ICE drivers.
 - The VisualStates tool would benefit from a tabbed design. The design has to be discussed before it can be executed
 which is done [here](https://github.com/JdeRobot/VisualStates/issues/120).
+
+## Explanation Videos
+- [Demonstrating Parameterization of States](https://www.youtube.com/watch?v=cRWVHkjcYvw): Explaians why should 
+one use parameters and why was it added to the tool
+- [Usage of Parameter](https://drive.google.com/file/d/1nuJuUHtd9Fs08b9c9AcmKaN3_HClEmUg/view?usp=sharing): Explains how to use parameters in VisualStates.
 
 <a name="people-involved"/>
 
