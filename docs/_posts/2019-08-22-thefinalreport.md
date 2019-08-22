@@ -1,12 +1,15 @@
-# Baidyanath-colab
+# The Final Report
 
 |Contents                                 |
 |-----------------------------------------|
-|1. [VisualStates Tool](#visualstates)   |
-|2. [People Involved](#people-involved)            |
-|3. [Links](#links)                       |
-|4. [Development Status](#status)         |
-|5. [Documentation](#documentation)|
+|1. [VisualStates Tool](#visualstates)    |
+|2. [The Task](#task)                     |
+|3. [Work Completed](#completed)          |
+|4. [Work Left](#left)                    |
+|5. [People Involved](#people-involved)   |
+|6. [Links](#links)                       |
+|7. [Development Status](#status)         |
+|8. [Documentation](#documentation)       |
 
 
 
@@ -23,6 +26,8 @@ which connects to the configured drivers at runtime and implements the automata.
 This tool speeds up the development of robot applications, reducing the code 
 that has to be manually created.
 
+<a name="task"/>
+
 ## The Task
 Visual States is a great tool but some features were felt missing. I had to work on two of these.
 
@@ -37,23 +42,25 @@ add his behaviour to the library.
 
 The task also involved developing examples that would show the working of these features.
 
-## Progress
-##### [Parameterization of Visual States](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/1)
+<a name="completed"/>
+
+## Work Completed
+**[Parameterization of Visual States](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/1):**
 This feature has been added but it hasn't been merged with master. The code has been thoroughly reviewed by my mentors
 and the bugs fund has been squashed. One of the previously existing examples in the VisualStates examples 
 repository has been modified to use parameters to show it working.
 
-##### [Online Library Import and Export](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/5)
+**[Online Library Import and Export](https://github.com/TheRoboticsClub/colab-gsoc2019-Baidyanath_Kundu/pull/5):**
 The code for this has been created but it is pending to be reviewed by the mentors. The library repository 
 hasn't been created. It has to go through these before it can be merged. 
 
-##### Adding a new model for examples
-The ArDrone2 model is being changed so that it uses ROS publishers and subscribers instead of ICE drivers.
+<a name="left"/>
 
-## Work to be done
+## Work Left
 - The online library and importer need to be checked for bugs and both of them are to be merged to master.
 - More examples need to be created that can be added to the library and uses parameters.
-- The VisualStates tool would benifit from a tabbed design. The design has to be discussed before it can be executed
+- ArDrone2 model is being changed so that it uses ROS publishers and subscribers instead of ICE drivers.
+- The VisualStates tool would benefit from a tabbed design. The design has to be discussed before it can be executed
 which is done [here](https://github.com/JdeRobot/VisualStates/issues/120).
 
 <a name="people-involved"/>
