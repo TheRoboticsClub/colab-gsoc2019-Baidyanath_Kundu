@@ -67,7 +67,7 @@ which is done [here](https://github.com/JdeRobot/VisualStates/issues/120).
 ## Explanation Videos
 - [Demonstrating Parameterization of States](https://www.youtube.com/watch?v=cRWVHkjcYvw): Explaians why should 
 one use parameters and why was it added to the tool
-- [Usage of Parameter](https://drive.google.com/file/d/1nuJuUHtd9Fs08b9c9AcmKaN3_HClEmUg/view?usp=sharing): Explains how to use parameters in VisualStates.
+- [Using parameterized behaviors](https://www.youtube.com/watch?v=PlO-l3zDaFU): Explains how to use parameters in VisualStates.
 
 <a name="people-involved"/>
 
