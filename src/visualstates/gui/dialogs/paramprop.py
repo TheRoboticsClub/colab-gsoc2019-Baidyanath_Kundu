@@ -112,7 +112,7 @@ class ParamPropDialog(QDialog):
         if not isTypeEqualValue(self.typeCb.currentText(), self.valueEdit.text().strip()):
             QMessageBox.warning(self, 'Error', 'Value is not same as type')
         elif not isParamName(self.nameEdit.text().strip()):
-            QMessageBox.warning(self, 'Error', 'Name does not meet requirements of a parameter')
+            QMessageBox.warning(self, 'Error', 'Name does not meet requirements of a parameter.\n\nIt must start with an alphabet and can only contain alphanumeric characters and underscores.')
         else:
             if self.nameEdit.text() != self.id and self.id != "":
                 for param in self.params.values():
