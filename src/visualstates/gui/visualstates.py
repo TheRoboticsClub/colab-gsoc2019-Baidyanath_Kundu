@@ -27,6 +27,7 @@ from .transition.timerdialog import TimerDialog
 from .dialogs.namespacedialog import NamespaceDialog
 from .dialogs.librariesdialog import LibrariesDialog
 from .dialogs.rosconfigdialog import RosConfigDialog
+from .dialogs.importdialog import ImportDialog
 from .dialogs.libraryexport.libraryexportdialog import LibraryExportDialog
 from .dialogs.libraryexport.githubcreddialog import GithubCredentialsDialog
 from .dialogs.libraryimport.libraryimportdialog import FileImportDialog
@@ -44,8 +45,8 @@ class VisualStates(QMainWindow):
         self.configDialog = None
 
         # root state
-        self.globalNamespace = Namespace('', '')
-        self.localNamespace = Namespace('', '')
+        self.globalNamespace = Namespace('', '', [])
+        self.localNamespace = Namespace('', '', [])
         self.rootState = State(0, "root", True, self.localNamespace)
         self.activeState = self.rootState
         self.activeNamespace = self.localNamespace
@@ -123,7 +124,6 @@ class VisualStates(QMainWindow):
         transitionAction.setStatusTip('Create a transition')
         transitionAction.triggered.connect(self.transitionAction)
 
-        # data menu
         timerAction = QAction('&Timer', self)
         timerAction.setShortcut('Ctrl+M')
         timerAction.setStatusTip('Set timing of states')
@@ -202,8 +202,8 @@ class VisualStates(QMainWindow):
         self.treeModel.removeAll()
 
         # create new root state
-        self.globalNamespace = Namespace('', '')
-        self.localNamespace = Namespace('', '')
+        self.globalNamespace = Namespace('', '', [])
+        self.localNamespace = Namespace('', '', [])
         self.rootState = State(0, 'root', True, self.localNamespace)
 
         self.automataScene.setActiveState(self.rootState)
@@ -270,17 +270,23 @@ class VisualStates(QMainWindow):
             tempPath = self.fileManager.getFullPath()
             file = self.fileManager.open(fileDialog.selectedFiles()[0])
             self.fileManager.setFullPath(tempPath)
+            self.importFile(file)
+
+    def importFile(self, file):
             # if the current active state already has an initial state make sure that
             # there will not be any initial state in the imported state
             if self.activeState.getInitialChild() is not None:
                 for childState in file[0].getChildren():
                     childState.setInitial(False)
 
-            # Update importing Namespaces
-            importedState, self.config, self.libraries, self.globalNamespace = self.importManager.updateAuxiliaryData(file, self)
-            self.treeModel.loadFromRoot(importedState, self.activeState)
-            self.automataScene.displayState(self.activeState)
-            self.automataScene.setLastIndexes(self.rootState)
+            displayParamDialog = ImportDialog("Imported States and Parameters", file)
+            if displayParamDialog.exec_():
+                file = displayParamDialog.file
+                # Update importing Namespaces
+                importedState, self.config, self.libraries, self.globalNamespace = self.importManager.updateAuxiliaryData(file, self)
+                self.treeModel.loadFromRoot(importedState, self.activeState)
+                self.automataScene.displayState(self.activeState)
+                self.automataScene.setLastIndexes(self.rootState)
 
     def libImportAction(self):
         fileImportDialog = FileImportDialog()
@@ -316,7 +322,7 @@ class VisualStates(QMainWindow):
             timerDialog.exec_()
 
     def globalNamespaceAction(self):
-        self.globalNamespaceDialog = NamespaceDialog('Global Namespace', self.globalNamespace)
+        self.globalNamespaceDialog = NamespaceDialog('Global Namespace', self.globalNamespace, True)
         self.globalNamespaceDialog.namespaceChanged.connect(self.globalNamespaceChanged)
         self.globalNamespaceDialog.exec_()
 

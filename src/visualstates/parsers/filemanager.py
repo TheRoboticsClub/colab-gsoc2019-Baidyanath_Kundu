@@ -96,7 +96,7 @@ class FileManager():
         doc = minidom.parse(fullPath)
 
         globalNamespaceNode = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('global_namespace')[0]
-        globalNamespace = Namespace('', '')
+        globalNamespace = Namespace('', '', [])
         globalNamespace.parse(globalNamespaceNode)
 
         rootNode = doc.getElementsByTagName('VisualStates')[0].getElementsByTagName('state')[0]
