@@ -20,7 +20,7 @@
 from visualstates.core.parameter import Parameter
 
 class Namespace:
-    def __init__(self, functions, variables, params):
+    def __init__(self, functions, variables, params=[]):
         self.functions = functions
         self.variables = variables
         self.params = params

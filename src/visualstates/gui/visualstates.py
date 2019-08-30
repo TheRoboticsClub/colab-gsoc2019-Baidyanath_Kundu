@@ -295,15 +295,7 @@ class VisualStates(QMainWindow):
 
     def libImportFile(self, fileStr):
         file = self.fileManager.parse(fileStr)
-        if self.activeState.getInitialChild() is not None:
-            for childState in file[0].getChildren():
-                childState.setInitial(False)
-
-        importedState, self.config, self.libraries, self.globalNamespace = self.importManager.updateAuxiliaryData(file,
-                                                                                                                  self)
-        self.treeModel.loadFromRoot(importedState, self.activeState)
-        self.automataScene.displayState(self.activeState)
-        self.automataScene.setLastIndexes(self.rootState)
+        self.importFile(file)
 
     def libExportAction(self):
         xmlFile = self.fileManager.generateXml(self.rootState, self.config, self.libraries, self.globalNamespace)
